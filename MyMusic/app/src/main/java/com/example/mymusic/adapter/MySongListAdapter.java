@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,8 @@ public class MySongListAdapter extends RecyclerView.Adapter<MySongListAdapter.My
     private ArrayList<Song> mSongArrayList;
     private Context context;
 
+    public OnItemClickListener mItemClickListener;
+
     public MySongListAdapter(ArrayList<Song> songArrayList, Context context) {
         mSongArrayList = songArrayList;
         this.context = context;
@@ -27,10 +30,19 @@ public class MySongListAdapter extends RecyclerView.Adapter<MySongListAdapter.My
     class MySongItemViewHolder extends RecyclerView.ViewHolder{
 
         TextView mTextView;
+        LinearLayout llContainer;
 
         public MySongItemViewHolder(@NonNull View itemView) {
             super(itemView);
             mTextView = itemView.findViewById(R.id.tv_song_name);
+            llContainer = itemView.findViewById(R.id.ll_song_item);
+            llContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
         }
 
         public void bind(Song song){
@@ -56,4 +68,11 @@ public class MySongListAdapter extends RecyclerView.Adapter<MySongListAdapter.My
         return mSongArrayList == null ? 0:mSongArrayList.size();
     }
 
+    interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+    private void setItemClickListener(OnItemClickListener itemClickListener) {
+        mItemClickListener = itemClickListener;
+    }
 }
