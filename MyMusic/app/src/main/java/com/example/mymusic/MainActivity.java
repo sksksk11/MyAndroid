@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.mymusic.adapter.MySongListAdapter;
+import com.example.mymusic.data.GlobalConstans;
 import com.example.mymusic.data.Song;
 
 import java.util.ArrayList;
@@ -54,6 +56,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void initSongList() {
         mMySongListAdapter = new MySongListAdapter(mSongArrayList,this);
+        mMySongListAdapter.setItemClickListener(new MySongListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Toast.makeText(MainActivity.this,"点击了"+position,Toast.LENGTH_SHORT).show();
+
+                //设置跳转，传参
+                Intent intent = new Intent(MainActivity.this,MusicPlayActivity.class);
+//                intent.putExtra(GlobalConstans.KEY_SONG_LIST,mSongArrayList);
+                intent.putExtra(GlobalConstans.KEY_SONG_INDEX,position);
+                intent.putParcelableArrayListExtra(GlobalConstans.KEY_SONG_LIST,mSongArrayList);
+
+                startActivity(intent);
+            }
+        });
         mRCVSongList.setAdapter(mMySongListAdapter); //加载数据
         mRCVSongList.setLayoutManager(new LinearLayoutManager(this));  //设置布局
 

@@ -38,8 +38,10 @@ public class MySongListAdapter extends RecyclerView.Adapter<MySongListAdapter.My
             llContainer = itemView.findViewById(R.id.ll_song_item);
             llContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-
+                public void onClick(View view) {
+                    if(mItemClickListener!=null){
+                        mItemClickListener.onItemClick(getAdapterPosition());
+                    }
                 }
             });
 
@@ -68,11 +70,11 @@ public class MySongListAdapter extends RecyclerView.Adapter<MySongListAdapter.My
         return mSongArrayList == null ? 0:mSongArrayList.size();
     }
 
-    interface OnItemClickListener{
+    public interface OnItemClickListener{
         void onItemClick(int position);
     }
 
-    private void setItemClickListener(OnItemClickListener itemClickListener) {
+    public void setItemClickListener(OnItemClickListener itemClickListener) {
         mItemClickListener = itemClickListener;
     }
 }
