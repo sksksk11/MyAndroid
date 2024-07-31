@@ -23,7 +23,10 @@ public class MusicPlayActivity extends AppCompatActivity {
     private ServiceConnection conn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
-            ((MyMusicService.myMusicBinder)iBinder).musicPlay();
+           //服务已建立，传递数据（通过IBinder）
+            MyMusicService.myMusicBinder musicBinder = (MyMusicService.myMusicBinder) iBinder;
+            musicBinder.updateMusicList(mSongArrayList);
+
         }
 
         @Override

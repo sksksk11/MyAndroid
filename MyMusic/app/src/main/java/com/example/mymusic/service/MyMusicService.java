@@ -34,7 +34,8 @@ public class MyMusicService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+
+        return new myMusicBinder(this);
     }
 
 
@@ -49,15 +50,36 @@ public class MyMusicService extends Service {
     }
 
 
+    private void updateMusicList(ArrayList<Song> songArrayList) {
+        this.mSongArrayList = songArrayList;
+
+    }
+
+
+    
+    ////////////////////////////////////////////////////////////
+
     public class myMusicBinder extends Binder {
 
-        public void musicPlay(){
+        MyMusicService mMusicService;
+
+        public myMusicBinder(MyMusicService myMusicService) {
+            mMusicService = myMusicService;
+        }
+
+        public void startPlay(){
+
+        }
+
+        public void updateMusicList(ArrayList<Song> songArrayList){
+            mMusicService.updateMusicList(songArrayList);
 
         }
 
 
 
     }
+
 
 
 }
