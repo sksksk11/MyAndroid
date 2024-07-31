@@ -46,11 +46,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void initData() {
         mSongArrayList = new ArrayList<>();
-        mSongArrayList.add(new Song("song1.mp3"));
-        mSongArrayList.add(new Song("song2.mp3"));
-        mSongArrayList.add(new Song("song3.mp3"));
-        mSongArrayList.add(new Song("song4.mp3"));
-        mSongArrayList.add(new Song("song5.mp3"));
+        mSongArrayList.add(new Song("Obrayzow.mp3"));
+        mSongArrayList.add(new Song("Real People.mp3"));
+        mSongArrayList.add(new Song("Sul Sul.mp3"));
+        mSongArrayList.add(new Song("Test Card 4 4.mp3"));
+        mSongArrayList.add(new Song("The Sims 4 Theme.mp3"));
 
     }
 
