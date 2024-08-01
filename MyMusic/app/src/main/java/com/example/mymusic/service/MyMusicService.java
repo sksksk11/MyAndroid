@@ -79,6 +79,8 @@ public class MyMusicService extends Service {
         Log.d("tag", "正在播放歌曲: "+songName);
 
         try {
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
             AssetFileDescriptor fileDescriptor = assetManager.openFd(songName);
             mMediaPlayer.setDataSource(fileDescriptor.getFileDescriptor(),
                     fileDescriptor.getStartOffset(),
@@ -94,6 +96,17 @@ public class MyMusicService extends Service {
 
     private boolean isPlaying() {
         return mMediaPlayer.isPlaying();
+
+    }
+
+    private void previous() {
+        //播放上一首
+        curSongIndex = curSongIndex -1;
+        if(curSongIndex <0 ){
+            curSongIndex = mSongArrayList.size()-1;
+        }
+        Log.d("tag", "curSongIndex: "+curSongIndex);
+        updateCurrentMusicIndex(curSongIndex);
 
     }
 
@@ -138,6 +151,9 @@ public class MyMusicService extends Service {
         }
 
 
+        public void previous() {
+            mMusicService.previous();
+        }
     }
 
 

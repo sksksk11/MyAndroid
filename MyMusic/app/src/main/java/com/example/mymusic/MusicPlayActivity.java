@@ -46,6 +46,8 @@ public class MusicPlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_play);
 
+        iv_palyorpause = findViewById(R.id.iv_palyorpause);  //暂定、播放按钮
+
         Intent intent = getIntent();
         curSongIndex = intent.getIntExtra(GlobalConstans.KEY_SONG_INDEX,0);
 //        mSongArrayList = (ArrayList<Song>) intent.getSerializableExtra(GlobalConstans.KEY_SONG_LIST);
@@ -69,17 +71,25 @@ public class MusicPlayActivity extends AppCompatActivity {
 
 
     public void playOrPause(View view) {
-
+        //播放或暂停
         if(mBinder.isPlaying()){
             //如果正在播放，则暂停播放
             mBinder.pause();
             Toast.makeText(this,"暂停播放",Toast.LENGTH_SHORT);
+            iv_palyorpause.setImageResource(R.drawable.playpause);
 
         } else {
             //如果已暂停，则开始播放
             mBinder.startPlay();
             Toast.makeText(this,"暂停播放",Toast.LENGTH_SHORT);
+            iv_palyorpause.setImageResource(R.drawable.img_play);
         }
+
+    }
+
+
+    public void playPrevious(View view) {
+        mBinder.previous();
 
     }
 }
