@@ -7,6 +7,7 @@ import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -74,11 +75,14 @@ public class MyMusicService extends Service {
         String songName = song.getSongName();
 
         AssetManager assetManager = getAssets();
+
+        Log.d("tag", "正在播放歌曲: "+songName);
+
         try {
-            AssetFileDescriptor assetFileDescriptor = assetManager.openFd(songName);
-            mMediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor(),
-                    assetFileDescriptor.getStartOffset(),
-                    assetFileDescriptor.getLength());
+            AssetFileDescriptor fileDescriptor = assetManager.openFd(songName);
+            mMediaPlayer.setDataSource(fileDescriptor.getFileDescriptor(),
+                    fileDescriptor.getStartOffset(),
+                    fileDescriptor.getLength());
             mMediaPlayer.prepare();
             mMediaPlayer.start();
 
@@ -88,7 +92,10 @@ public class MyMusicService extends Service {
 
     }
 
+    private boolean isPlaying() {
+        return mMediaPlayer.isPlaying();
 
+    }
 
     ////////////////////////////////////////////////////////////
 
@@ -101,6 +108,17 @@ public class MyMusicService extends Service {
         }
 
         public void startPlay(){
+            //如果已经在播放了，返回
+            if(mMediaPlayer.isPlaying()){
+                return;
+            }
+            mMediaPlayer.start();
+        }
+
+        public void pause() {
+            if(mMediaPlayer.isPlaying()){
+                mMediaPlayer.pause();
+            }
 
         }
 
@@ -113,6 +131,12 @@ public class MyMusicService extends Service {
             mMusicService.updateCurrentMusicIndex(index);
 
         }
+
+
+        public boolean isPlaying() {
+           return mMusicService.isPlaying();
+        }
+
 
     }
 

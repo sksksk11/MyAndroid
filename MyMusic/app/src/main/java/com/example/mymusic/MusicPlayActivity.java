@@ -8,6 +8,9 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.mymusic.data.GlobalConstans;
 import com.example.mymusic.data.Song;
@@ -20,13 +23,16 @@ public class MusicPlayActivity extends AppCompatActivity {
 
     private ArrayList<Song> mSongArrayList;
     private int curSongIndex;
+    private MyMusicService.myMusicBinder mBinder;
+    private ImageView iv_palyorpause ;  //播放暂停按钮
+
     private ServiceConnection conn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder iBinder) {
            //服务已建立，传递数据（通过IBinder）
-            MyMusicService.myMusicBinder musicBinder = (MyMusicService.myMusicBinder) iBinder;
-            musicBinder.updateMusicList(mSongArrayList);
-            musicBinder.updateCurrentMusicIndex(curSongIndex);
+            mBinder = (MyMusicService.myMusicBinder) iBinder;
+            mBinder.updateMusicList(mSongArrayList);
+            mBinder.updateCurrentMusicIndex(curSongIndex);
         }
 
         @Override
@@ -62,4 +68,18 @@ public class MusicPlayActivity extends AppCompatActivity {
     }
 
 
+    public void playOrPause(View view) {
+
+        if(mBinder.isPlaying()){
+            //如果正在播放，则暂停播放
+            mBinder.pause();
+            Toast.makeText(this,"暂停播放",Toast.LENGTH_SHORT);
+
+        } else {
+            //如果已暂停，则开始播放
+            mBinder.startPlay();
+            Toast.makeText(this,"暂停播放",Toast.LENGTH_SHORT);
+        }
+
+    }
 }
