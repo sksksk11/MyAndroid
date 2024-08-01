@@ -26,7 +26,7 @@ public class MusicPlayActivity extends AppCompatActivity {
            //服务已建立，传递数据（通过IBinder）
             MyMusicService.myMusicBinder musicBinder = (MyMusicService.myMusicBinder) iBinder;
             musicBinder.updateMusicList(mSongArrayList);
-
+            musicBinder.updateCurrentMusicIndex(curSongIndex);
         }
 
         @Override
@@ -50,6 +50,7 @@ public class MusicPlayActivity extends AppCompatActivity {
         }
 
         startMusicService();
+
 
 
     }

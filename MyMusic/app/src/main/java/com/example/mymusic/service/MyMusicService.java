@@ -2,6 +2,8 @@ package com.example.mymusic.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
@@ -10,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.example.mymusic.data.Song;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MyMusicService extends Service {
@@ -47,6 +50,12 @@ public class MyMusicService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        if(mMediaPlayer!=null){
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 
 
@@ -55,8 +64,32 @@ public class MyMusicService extends Service {
 
     }
 
+    private void updateCurrentMusicIndex(int index) {
+        //防传入数据过大或过小, 严谨
+        if(index<0 || index>= mSongArrayList.size() ){ return; }
 
-    
+        this.curSongIndex = index;
+        //播放该条歌曲
+        Song song = mSongArrayList.get(curSongIndex);
+        String songName = song.getSongName();
+
+        AssetManager assetManager = getAssets();
+        try {
+            AssetFileDescriptor assetFileDescriptor = assetManager.openFd(songName);
+            mMediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor(),
+                    assetFileDescriptor.getStartOffset(),
+                    assetFileDescriptor.getLength());
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
     ////////////////////////////////////////////////////////////
 
     public class myMusicBinder extends Binder {
@@ -76,9 +109,13 @@ public class MyMusicService extends Service {
 
         }
 
+        public void updateCurrentMusicIndex(int index){
+            mMusicService.updateCurrentMusicIndex(index);
 
+        }
 
     }
+
 
 
 
