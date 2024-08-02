@@ -12,6 +12,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.mymusic.data.Song;
+import com.example.mymusic.myimplements.musicImpl;
+import com.example.mymusic.myimplements.musicImpl.onSongChangeListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ public class MyMusicService extends Service {
     MediaPlayer mMediaPlayer;
     private ArrayList<Song> mSongArrayList;
     private int curSongIndex;
+//    private Song curSong;  //当前播放歌曲
+    private onSongChangeListener mSongChangeListener;
 
     @Override
     public void onCreate() {
@@ -74,6 +78,10 @@ public class MyMusicService extends Service {
         Song song = mSongArrayList.get(curSongIndex);
         String songName = song.getSongName();
 
+        if(mSongChangeListener!=null) {
+            mSongChangeListener.onSongChange(song);  //外传当前播放歌曲信息
+        }
+
         AssetManager assetManager = getAssets();
 
         Log.d("tag", "正在播放歌曲: "+songName);
@@ -101,12 +109,34 @@ public class MyMusicService extends Service {
 
     private void previous() {
         //播放上一首
-        curSongIndex = curSongIndex -1;
-        if(curSongIndex <0 ){
-            curSongIndex = mSongArrayList.size()-1;
+        int index = curSongIndex -1;
+        if(index <0 ){
+            index = mSongArrayList.size()-1;
         }
-        Log.d("tag", "curSongIndex: "+curSongIndex);
-        updateCurrentMusicIndex(curSongIndex);
+//        Log.d("tag", "curSongIndex: "+index);
+        updateCurrentMusicIndex(index);
+
+    }
+
+    private void next() {
+        //播放下一首
+        int index = curSongIndex + 1;
+        if(index > mSongArrayList.size()-1 ){
+            index = 0;
+        }
+//        Log.d("tag", "curSongIndex: "+index);
+        updateCurrentMusicIndex(index);
+    }
+
+    private void stopMusic() {
+        //停止播放音乐
+        mMediaPlayer.stop();
+        try {
+            mMediaPlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -154,8 +184,25 @@ public class MyMusicService extends Service {
         public void previous() {
             mMusicService.previous();
         }
-    }
 
+        public void next() {
+            mMusicService.next();
+        }
+
+        public void stopMusic() {
+            mMusicService.stopMusic();
+        }
+
+        /////////////////////
+        //接口
+        //返回当前播放歌曲
+
+        public void setOnSongChangeListener(onSongChangeListener mListener){
+            mSongChangeListener = mListener;
+        }
+
+
+    }
 
 
 

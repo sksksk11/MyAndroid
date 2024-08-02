@@ -10,10 +10,13 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mymusic.data.GlobalConstans;
 import com.example.mymusic.data.Song;
+import com.example.mymusic.myimplements.musicImpl;
+import com.example.mymusic.myimplements.musicImpl.onSongChangeListener;
 import com.example.mymusic.service.MyMusicService;
 
 import java.io.Serializable;
@@ -24,7 +27,9 @@ public class MusicPlayActivity extends AppCompatActivity {
     private ArrayList<Song> mSongArrayList;
     private int curSongIndex;
     private MyMusicService.myMusicBinder mBinder;
-    private ImageView iv_palyorpause ;  //播放暂停按钮
+    private ImageView iv_palyorpause  ;  //播放暂停按钮
+    private TextView tv_music_title ; //音乐标题
+    private Song curSong ;  //当前播放歌曲
 
     private ServiceConnection conn = new ServiceConnection() {
         @Override
@@ -33,6 +38,14 @@ public class MusicPlayActivity extends AppCompatActivity {
             mBinder = (MyMusicService.myMusicBinder) iBinder;
             mBinder.updateMusicList(mSongArrayList);
             mBinder.updateCurrentMusicIndex(curSongIndex);
+
+            mBinder.setOnSongChangeListener(new onSongChangeListener() {
+                @Override
+                public void onSongChange(Song song) {
+                    curSong = song;
+                    tv_music_title.setText(curSong.getSongName());
+                }
+            });
         }
 
         @Override
@@ -47,19 +60,21 @@ public class MusicPlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_music_play);
 
         iv_palyorpause = findViewById(R.id.iv_palyorpause);  //暂定、播放按钮
+        tv_music_title = findViewById(R.id.tv_music_title);  //音乐标题
 
         Intent intent = getIntent();
         curSongIndex = intent.getIntExtra(GlobalConstans.KEY_SONG_INDEX,0);
 //        mSongArrayList = (ArrayList<Song>) intent.getSerializableExtra(GlobalConstans.KEY_SONG_LIST);
         mSongArrayList = intent.getParcelableArrayListExtra(GlobalConstans.KEY_SONG_LIST);
-        Log.d("tag", "当前歌曲: "+curSongIndex);
+        Log.d("tag", "当前歌曲序号: "+curSongIndex);
         if(mSongArrayList!=null){
             Log.d("tag", "歌曲信息: "+mSongArrayList);
+
+            Song song = mSongArrayList.get(curSongIndex);
+            tv_music_title.setText(song.getSongName());
         }
 
         startMusicService();
-
-
 
     }
 
@@ -76,13 +91,13 @@ public class MusicPlayActivity extends AppCompatActivity {
             //如果正在播放，则暂停播放
             mBinder.pause();
             Toast.makeText(this,"暂停播放",Toast.LENGTH_SHORT);
-            iv_palyorpause.setImageResource(R.drawable.playpause);
+            iv_palyorpause.setImageResource(R.drawable.img_play);
 
         } else {
             //如果已暂停，则开始播放
             mBinder.startPlay();
             Toast.makeText(this,"暂停播放",Toast.LENGTH_SHORT);
-            iv_palyorpause.setImageResource(R.drawable.img_play);
+            iv_palyorpause.setImageResource(R.drawable.playpause);
         }
 
     }
@@ -90,6 +105,17 @@ public class MusicPlayActivity extends AppCompatActivity {
 
     public void playPrevious(View view) {
         mBinder.previous();
+    }
 
+    public void next(View view) {
+        mBinder.next();
+
+    }
+
+
+    public void stopMusic(View view) {
+        mBinder.stopMusic();
+        //更新播放按钮图标
+        iv_palyorpause.setImageResource(R.drawable.img_play);
     }
 }
