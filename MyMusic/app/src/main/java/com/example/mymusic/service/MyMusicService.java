@@ -140,6 +140,15 @@ public class MyMusicService extends Service {
 
     }
 
+    private int getCurTime(){
+        //获取当前播放进度
+        return mMediaPlayer.getCurrentPosition();
+    }
+
+    private int getDuration(){
+        return mMediaPlayer.getDuration();
+    }
+
     ////////////////////////////////////////////////////////////
 
     public class myMusicBinder extends Binder {
@@ -191,6 +200,15 @@ public class MyMusicService extends Service {
 
         public void stopMusic() {
             mMusicService.stopMusic();
+        }
+
+        public int getCurTime(){
+            //获取当前播放进度时间
+            return mMusicService.getCurTime();
+        }
+
+        public int getDuration(){
+            return mMusicService.getDuration();
         }
 
         /////////////////////
