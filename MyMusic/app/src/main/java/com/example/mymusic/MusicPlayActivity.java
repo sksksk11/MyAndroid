@@ -150,11 +150,18 @@ public class MusicPlayActivity extends AppCompatActivity {
     public void playPrevious(View view) {
         mBinder.previous();
         iv_palyorpause.setImageResource(R.drawable.playpause);
+
     }
 
     public void next(View view) {
         mBinder.next();
         iv_palyorpause.setImageResource(R.drawable.playpause);
+
+        //获取音乐总时长
+        int durTime = mBinder.getDuration();
+        tv_duration.setText(timeTools.formateTime(durTime));
+        seekBar.setMax(durTime);
+
     }
 
 
