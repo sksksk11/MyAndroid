@@ -149,6 +149,11 @@ public class MyMusicService extends Service {
         return mMediaPlayer.getDuration();
     }
 
+
+    private void setProgress(int changeProgress) {
+        mMediaPlayer.seekTo(changeProgress);
+    }
+
     ////////////////////////////////////////////////////////////
 
     public class myMusicBinder extends Binder {
@@ -211,6 +216,10 @@ public class MyMusicService extends Service {
             return mMusicService.getDuration();
         }
 
+        public void setProgress(int changeProgress) {
+            mMusicService.setProgress(changeProgress);
+        }
+
         /////////////////////
         //接口
         //返回当前播放歌曲
@@ -218,6 +227,7 @@ public class MyMusicService extends Service {
         public void setOnSongChangeListener(onSongChangeListener mListener){
             mSongChangeListener = mListener;
         }
+
 
 
     }

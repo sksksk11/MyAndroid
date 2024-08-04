@@ -16,12 +16,10 @@ import android.widget.Toast;
 
 import com.example.mymusic.data.GlobalConstans;
 import com.example.mymusic.data.Song;
-import com.example.mymusic.myimplements.musicImpl;
 import com.example.mymusic.myimplements.musicImpl.onSongChangeListener;
 import com.example.mymusic.service.MyMusicService;
 import com.example.mymusic.utils.timeTools;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -36,6 +34,8 @@ public class MusicPlayActivity extends AppCompatActivity {
     private Song curSong ;  //当前播放歌曲
     private TextView tv_curTime,tv_duration ; //歌曲当前播放时间和总时间
     private SeekBar seekBar ; //进度条
+    private boolean isSeeking ;   //是否正在拖动进度条
+    private Timer timer;
 
     private ServiceConnection conn = new ServiceConnection() {
         @Override
@@ -87,6 +87,28 @@ public class MusicPlayActivity extends AppCompatActivity {
             tv_music_title.setText(song.getSongName());
         }
 
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar1, int progress, boolean fromUser) {
+                updateStarttim(progress);
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar1) {
+                isSeeking = true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar1) {
+
+                isSeeking = false;
+                int progress = seekBar1.getProgress();
+                mBinder.setProgress(progress);  //播放进度调整到进度条
+
+            }
+        });
+
         startMusicService();
 
     }
@@ -109,7 +131,9 @@ public class MusicPlayActivity extends AppCompatActivity {
         tv_duration.setText(timeTools.formateTime(durTime));
         seekBar.setMax(durTime);
 
-        Timer timer = new Timer();
+        if(timer!=null){ return;}
+
+        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -117,14 +141,24 @@ public class MusicPlayActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //更新进度条和当前播放进度时间
-                        seekBar.setProgress(curProgress);
-                        tv_curTime.setText(timeTools.formateTime(curProgress));
+                        if(!isSeeking && mBinder.isPlaying()  ) {
+                            //更新进度条和当前播放进度时间
+                            seekBar.setProgress(curProgress);
+                            tv_curTime.setText(timeTools.formateTime(curProgress));
+                        }
+
                     }
                 });
             }
         },0,200);
 
+
+    }
+
+    //拖动进度条时更新音乐当前时间
+    public void updateStarttim(int progress){
+
+        tv_curTime.setText(timeTools.formateTime(progress));
 
     }
 
@@ -134,13 +168,15 @@ public class MusicPlayActivity extends AppCompatActivity {
         if(mBinder.isPlaying()){
             //如果正在播放，则暂停播放
             mBinder.pause();
-            Toast.makeText(this,"暂停播放",Toast.LENGTH_SHORT);
+            Toast.makeText(this,"暂停播放",Toast.LENGTH_SHORT).show();
             iv_palyorpause.setImageResource(R.drawable.img_play);
+
+
 
         } else {
             //如果已暂停，则开始播放
             mBinder.startPlay();
-            Toast.makeText(this,"暂停播放",Toast.LENGTH_SHORT);
+            Toast.makeText(this,"暂停播放",Toast.LENGTH_SHORT).show();
             iv_palyorpause.setImageResource(R.drawable.playpause);
         }
 
@@ -150,18 +186,14 @@ public class MusicPlayActivity extends AppCompatActivity {
     public void playPrevious(View view) {
         mBinder.previous();
         iv_palyorpause.setImageResource(R.drawable.playpause);
-
+        initUi();
     }
 
     public void next(View view) {
         mBinder.next();
         iv_palyorpause.setImageResource(R.drawable.playpause);
 
-        //获取音乐总时长
-        int durTime = mBinder.getDuration();
-        tv_duration.setText(timeTools.formateTime(durTime));
-        seekBar.setMax(durTime);
-
+        initUi();
     }
 
 
@@ -169,8 +201,15 @@ public class MusicPlayActivity extends AppCompatActivity {
         mBinder.stopMusic();
         //更新播放按钮图标
         iv_palyorpause.setImageResource(R.drawable.img_play);
+        seekBar.setProgress(0);
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(timer!=null){
+            timer.cancel();
+            timer = null;
+        }
+    }
 }
