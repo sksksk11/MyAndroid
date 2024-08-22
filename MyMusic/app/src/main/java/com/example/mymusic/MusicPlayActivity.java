@@ -202,6 +202,7 @@ public class MusicPlayActivity extends AppCompatActivity {
         //更新播放按钮图标
         iv_palyorpause.setImageResource(R.drawable.img_play);
         seekBar.setProgress(0);
+        updateStarttim(0);
     }
 
     @Override
