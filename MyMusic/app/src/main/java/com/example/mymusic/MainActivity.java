@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btn_test ;
+    private Button btn_test ,btn_frame ;
     private RecyclerView mRCVSongList;
     private MySongListAdapter mMySongListAdapter;
     private ArrayList<Song> mSongArrayList;
@@ -77,9 +77,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         btn_test = (Button) findViewById(R.id.btn_test);
+        btn_frame = (Button) findViewById(R.id.btn_frame);
         mRCVSongList = findViewById(R.id.rcv_song_lsit);
 
     }
 
 
+    public void toFramePage(View view) {
+        Intent intent = new Intent(MainActivity.this,FrameActivity.class);
+        startActivity(intent);
+
+    }
 }
