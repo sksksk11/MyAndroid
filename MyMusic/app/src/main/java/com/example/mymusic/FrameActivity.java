@@ -15,6 +15,7 @@ public class FrameActivity extends AppCompatActivity {
     private Button btn_go,btn_collect,btn_bookMark;
     private EditText tv_url;
     private WebView wv_mainWebpage;
+    private String loadedUrl ;  //存储页面加载后的网页url
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,8 @@ public class FrameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_frame);
 
         initView();
+
+
 
     }
 
@@ -39,7 +42,14 @@ public class FrameActivity extends AppCompatActivity {
         //让WebView支持JavaScript脚本
         wv_mainWebpage.getSettings().setJavaScriptEnabled(true);
         //当需要从一个网页跳转到另一个网页时，目标网页仍然在当前WebView中显示，而不是打开系统浏览器。
-        wv_mainWebpage.setWebViewClient(new WebViewClient());
+        wv_mainWebpage.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                loadedUrl = view.getUrl();  //页面加载完成后，后去页面url
+                tv_url.setText(loadedUrl);
+            }
+        });
 
         wv_mainWebpage.loadUrl(urlString);
 

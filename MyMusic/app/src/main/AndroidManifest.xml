@@ -12,7 +12,10 @@
         android:theme="@style/Theme.MyMusic">
         <activity
             android:name=".FrameActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.fullScreen"
+            />
+
         <activity
             android:name=".MusicPlayActivity"
             android:exported="true"
