@@ -3,19 +3,21 @@ package com.example.mymusic;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class FrameActivity extends AppCompatActivity {
 
     private Button btn_go,btn_collect,btn_bookMark;
     private EditText tv_url;
     private WebView wv_mainWebpage;
-    private String loadedUrl ;  //存储页面加载后的网页url
+    private String loadedUrl ,webTitle ;  //存储页面加载后的网页url和标题
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +48,14 @@ public class FrameActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                loadedUrl = view.getUrl();  //页面加载完成后，后去页面url
+                loadedUrl = view.getUrl();  //页面加载完成后，获取页面url
                 tv_url.setText(loadedUrl);
+                webTitle = view.getTitle();
+//                Log.d("tag", "webTitle: "+webTitle);
             }
+
+
+
         });
 
         wv_mainWebpage.loadUrl(urlString);
