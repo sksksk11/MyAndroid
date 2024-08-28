@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -12,12 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.mymusic.utils.DatabaseHelper;
+
 public class FrameActivity extends AppCompatActivity {
 
     private Button btn_go,btn_collect,btn_bookMark;
     private EditText tv_url;
     private WebView wv_mainWebpage;
     private String loadedUrl ,webTitle ;  //存储页面加载后的网页url和标题
+    private DatabaseHelper mDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,14 +29,29 @@ public class FrameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_frame);
 
         initView();
+        initDataBase();
 
 
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //关闭指针
+
+        //关闭数据库
+    }
+
+    private void initDataBase() {
+        //初始化数据库
+        mDatabaseHelper = new DatabaseHelper(this);
+    }
+
     private void initView() {
         tv_url = findViewById(R.id.et_url);
         wv_mainWebpage = findViewById(R.id.wv_mainWebpage);
+        btn_collect = findViewById(R.id.btn_collect);
 
         String urlString = "http://www.163.com";
 
@@ -76,6 +95,15 @@ public class FrameActivity extends AppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+
+    }
+
+    public void addWeburl(View view) {
+        //点击收藏按钮，新增网页收藏
+        String url = tv_url.getText().toString().trim();
+        String title = webTitle.trim();
+
+        mDatabaseHelper.inserOneWebUrlByUrl(url,title);
 
     }
 }
