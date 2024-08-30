@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="5dp"
+    >
+    <ImageView
+    android:id="@+id/iv_icon"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:src="@drawable/bm_default"
+    android:layout_marginTop="8dp"
+        />
+
+    <LinearLayout
+        android:id="@+id/ll_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="7dp"
+        >
+        <TextView
+            android:id="@+id/et_Pagetitle"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:hint="网页标题网页标题"
+            android:textSize="16dp"
+            android:gravity="top"
+            android:background="@null"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="@color/black"
+            />
+        <TextView
+            android:id="@+id/et_pageUrl"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:hint="http://www.163.com"
+            android:textSize="15dp"
+            android:gravity="center_vertical"
+            android:background="@null"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="#5C5C5C"
+            />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray_50"
+            />
+
+    </LinearLayout>
+
+
+</LinearLayout>

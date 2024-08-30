@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.mymusic.R;
 import com.example.mymusic.data.WebInfo;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -18,12 +19,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final int DATABASE_NEW_VERSION = 2;
     public static final String TABLE_NAME_WEBURLS ="weburls";
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_WEBURL = "weburl";
-    private static final String COLUMN_WEBTITLE = "webtitle";
-    private static final String COLUMN_NUMBER = "number";
-    private static final String COLUMN_CATEGORY = "category";
-    private static final String COLUMN_ICON = "icon";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_WEBURL = "weburl";
+    public static final String COLUMN_WEBTITLE = "webtitle";
+    public static final String COLUMN_NUMBER = "number";
+    public static final String COLUMN_CATEGORY = "category";
+    public static final String COLUMN_ICON = "icon";
 
     private Context mContext;
 
@@ -48,7 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_WEBTITLE + " TEXT,"
                 + COLUMN_NUMBER + " INTEGER,"
                 + COLUMN_CATEGORY + " TEXT,"
-                + COLUMN_ICON + " TEXT"
+                + COLUMN_ICON + " INTEGER"
                 + ")";
         db.execSQL(createTableQuery);
 
@@ -81,6 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_WEBURL,webUrl);
             values.put(COLUMN_WEBTITLE,title);
             values.put(COLUMN_NUMBER,number);
+            values.put(COLUMN_ICON,R.drawable.bm_default);
             db.insert(TABLE_NAME_WEBURLS,null,values);
             db.close();
         }
@@ -129,6 +131,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return dataAmount;
+    }
+
+    //查询所有已保存书签
+    public Cursor getAllBookmarks(){
+
+        SQLiteDatabase db = getReadableDatabase();
+        String QuerySql = "select * from "+TABLE_NAME_WEBURLS ;
+        Log.d("TAG", "QuerySql: "+QuerySql);
+        Cursor cursor = db.rawQuery(QuerySql, null);
+
+        return cursor;
+
     }
 
 

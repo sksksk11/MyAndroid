@@ -1,15 +1,23 @@
 package com.example.mymusic.data;
 
-public class WebInfo {
-    private int number;    //页面排序编码
-    private String webUrl,webTitle,category,icon;    //页面地址,标题,分类,图标
+import com.example.mymusic.R;
 
-    private WebInfo(String webUrl, String webTitle) {
+public class WebInfo {
+    private int number,icon;    //页面排序编码
+    private String webUrl,webTitle,category;    //页面地址,标题,分类,图标
+
+    public WebInfo(String webUrl, String webTitle) {
         this.webUrl = webUrl;
         this.webTitle = webTitle;
     }
 
-    private int getNumber() {
+    public WebInfo(String webUrl, String webTitle, int icon) {
+        this.icon = icon;
+        this.webUrl = webUrl;
+        this.webTitle = webTitle;
+    }
+
+    public int getNumber() {
         return number;
     }
 
@@ -17,7 +25,7 @@ public class WebInfo {
         this.number = number;
     }
 
-    private String getWebUrl() {
+    public String getWebUrl() {
         return webUrl;
     }
 
@@ -25,7 +33,7 @@ public class WebInfo {
         this.webUrl = webUrl;
     }
 
-    private String getWebTitle() {
+    public String getWebTitle() {
         return webTitle;
     }
 
@@ -33,7 +41,7 @@ public class WebInfo {
         this.webTitle = webTitle;
     }
 
-    private String getCategory() {
+    public String getCategory() {
         return category;
     }
 
@@ -41,11 +49,11 @@ public class WebInfo {
         this.category = category;
     }
 
-    private String getIcon() {
+    public int getIcon() {
         return icon;
     }
 
-    private void setIcon(String icon) {
+    private void setIcon(int icon) {
         this.icon = icon;
     }
 
@@ -53,10 +61,10 @@ public class WebInfo {
     public String toString() {
         return "WebInfo{" +
                 "number=" + number +
+                ", icon=" + icon +
                 ", webUrl='" + webUrl + '\'' +
                 ", webTitle='" + webTitle + '\'' +
                 ", category='" + category + '\'' +
-                ", icon='" + icon + '\'' +
                 '}';
     }
 }

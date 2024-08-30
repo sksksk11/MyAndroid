@@ -2,6 +2,7 @@ package com.example.mymusic;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.mymusic.utils.DatabaseHelper;
+import com.example.mymusic.utils.UrlTools;
 
 public class FrameActivity extends AppCompatActivity {
 
@@ -22,6 +24,7 @@ public class FrameActivity extends AppCompatActivity {
     private WebView wv_mainWebpage;
     private String loadedUrl ,webTitle ;  //存储页面加载后的网页url和标题
     private DatabaseHelper mDatabaseHelper;
+    private static final int REQUEST_CODE = 100 ;   //选择书签返回参数
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +33,6 @@ public class FrameActivity extends AppCompatActivity {
 
         initView();
         initDataBase();
-
-
 
     }
 
@@ -104,6 +105,27 @@ public class FrameActivity extends AppCompatActivity {
         String title = webTitle.trim();
 
         mDatabaseHelper.inserOneWebUrlByUrl(url,title);
+        Toast.makeText(this,"已收藏："+title,Toast.LENGTH_SHORT).show();
 
+    }
+
+    public void openWebUrl(View view) {
+        String url = tv_url.getText().toString().trim();
+        Log.d("TAG", "inputUrl: "+url);
+        if(url.length()==0){
+            Toast.makeText(this,"url不能为空",Toast.LENGTH_SHORT).show();
+        }else {
+            //处理url字符串 ,加上http://
+            url = UrlTools.formatUrl(url);
+            Log.d("TAG", "formatUrl: "+url);
+            wv_mainWebpage.loadUrl(url);
+        }
+
+    }
+
+    public void browseSavedBookmark(View view) {
+        Intent intent = new Intent(this,SavedBookmarkActivity.class);
+//        startActivity(intent);
+        startActivityForResult(intent,REQUEST_CODE);
     }
 }

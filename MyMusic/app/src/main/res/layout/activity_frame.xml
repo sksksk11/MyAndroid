@@ -48,6 +48,7 @@
             android:layout_weight="1"
             android:text="书签"
             android:layout_marginLeft="6dp"
+            android:onClick="browseSavedBookmark"
             />
 
         <Button
@@ -58,6 +59,7 @@
             android:text="GO"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="@dimen/lpadding"
+            android:onClick="openWebUrl"
             />
 
     </LinearLayout>

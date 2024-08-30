@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mymusic">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -11,11 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMusic">
         <activity
+            android:name=".SavedBookmarkActivity"
+            android:exported="true" />
+        <activity
             android:name=".FrameActivity"
             android:exported="true"
-            android:theme="@style/Theme.fullScreen"
-            />
-
+            android:theme="@style/Theme.fullScreen" />
         <activity
             android:name=".MusicPlayActivity"
             android:exported="true"
@@ -31,9 +33,6 @@
         </activity>
 
         <service android:name=".service.MyMusicService" />
-
-
-
     </application>
 
 </manifest>
