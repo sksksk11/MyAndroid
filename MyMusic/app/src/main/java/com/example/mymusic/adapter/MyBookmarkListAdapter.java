@@ -1,6 +1,7 @@
 package com.example.mymusic.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
     private Context mContext;
 
     private onItemClickListener mItemClickListener;
+    private onLongClickListener mOnLongClickListener;
 
     public MyBookmarkListAdapter(List<WebInfo> webInfoList, Context context) {
         mWebInfoList = webInfoList;
@@ -35,7 +37,7 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
 
         private ImageView iv_icon;
         private TextView et_pageTitle, et_pageUrl;
-        private LinearLayout ll_container;
+        public LinearLayout ll_container;
 
         public MybookmarkViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -44,18 +46,6 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
             et_pageUrl = itemView.findViewById(R.id.et_pageUrl);
             ll_container = itemView.findViewById(R.id.ll_container);
 
-
-//            ll_container.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-////                    if(mItemClickListener !=null) {
-////                        mItemClickListener.onItemClick(getAdapterPosition());
-////                    }
-//
-//
-//
-//                }
-//            });
 
         }
 
@@ -83,6 +73,7 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
                 WebInfo webInfo = mWebInfoList.get(position);
                 Log.d("TAG", "被点击: "+position);
                 Toast.makeText(parent.getContext(),"已点击："+webInfo.getWebTitle().toString(),Toast.LENGTH_SHORT).show();
+                mItemClickListener.onItemSelected(position);
 
             }
         });
@@ -92,6 +83,24 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
             @Override
             public void onClick(View v) {
                 Log.d("TAG", "图片被点击");
+
+            }
+        });
+
+        //长按时，弹出页面修改已保存页面标题，或删除
+        mybookmarkViewHolder.ll_container.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                Log.d("TAG", "长时间点击");  //测试用
+
+                int position = mybookmarkViewHolder.getAdapterPosition();
+                WebInfo webInfo = mWebInfoList.get(position);
+                Log.d("TAG", "长时间点击: "+position);
+
+                mOnLongClickListener.onItemLongSelected(position);
+
+                return false;
             }
         });
 
@@ -111,12 +120,23 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
         return mWebInfoList == null ? 0:mWebInfoList.size();
     }
 
+    //点击选择item的接口
     public interface onItemClickListener{
-        void onItemClick(int position);
+        void onItemSelected(int position);
     }
 
     public void setItemClickListener(onItemClickListener itemClickListener){
         mItemClickListener = itemClickListener;
+    }
+
+
+    //长按选择item的接口
+    public interface onLongClickListener{
+        void onItemLongSelected(int position);
+    }
+
+    public void setLongClickListener(onLongClickListener itemLongClickListener){
+        mOnLongClickListener = itemLongClickListener;
     }
 
 }

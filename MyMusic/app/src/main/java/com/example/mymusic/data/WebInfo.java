@@ -2,8 +2,11 @@ package com.example.mymusic.data;
 
 import com.example.mymusic.R;
 
-public class WebInfo {
-    private int number,icon;    //页面排序编码
+import java.io.Serializable;
+
+//用 Serializable 接口实现 序列化实例，将对象转换成可存储或可传输的状态
+public class WebInfo implements Serializable {
+    private int number,icon,id;    //页面排序编码
     private String webUrl,webTitle,category;    //页面地址,标题,分类,图标
 
     public WebInfo(String webUrl, String webTitle) {
@@ -11,17 +14,22 @@ public class WebInfo {
         this.webTitle = webTitle;
     }
 
-    public WebInfo(String webUrl, String webTitle, int icon) {
+    public WebInfo(String webUrl, String webTitle, int icon,int id) {
         this.icon = icon;
         this.webUrl = webUrl;
         this.webTitle = webTitle;
+        this.id  = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public int getNumber() {
         return number;
     }
 
-    private void setNumber(int number) {
+    public void setNumber(int number) {
         this.number = number;
     }
 
@@ -29,7 +37,7 @@ public class WebInfo {
         return webUrl;
     }
 
-    private void setWebUrl(String webUrl) {
+    public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
     }
 
@@ -37,7 +45,7 @@ public class WebInfo {
         return webTitle;
     }
 
-    private void setWebTitle(String webTitle) {
+    public void setWebTitle(String webTitle) {
         this.webTitle = webTitle;
     }
 
@@ -45,7 +53,7 @@ public class WebInfo {
         return category;
     }
 
-    private void setCategory(String category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 
@@ -53,7 +61,7 @@ public class WebInfo {
         return icon;
     }
 
-    private void setIcon(int icon) {
+    public void setIcon(int icon) {
         this.icon = icon;
     }
 

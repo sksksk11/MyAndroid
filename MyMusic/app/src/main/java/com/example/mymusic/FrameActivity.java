@@ -1,5 +1,10 @@
 package com.example.mymusic;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -14,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.mymusic.data.WebInfo;
 import com.example.mymusic.utils.DatabaseHelper;
 import com.example.mymusic.utils.UrlTools;
 
@@ -25,6 +31,7 @@ public class FrameActivity extends AppCompatActivity {
     private String loadedUrl ,webTitle ;  //存储页面加载后的网页url和标题
     private DatabaseHelper mDatabaseHelper;
     private static final int REQUEST_CODE = 100 ;   //选择书签返回参数
+    private ActivityResultLauncher<Intent> activityResultLauncher ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +40,31 @@ public class FrameActivity extends AppCompatActivity {
 
         initView();
         initDataBase();
+        //获取返回值
+        initGetResult();
 
     }
+
+    private void initGetResult() {
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        Log.d("TAG", "result: "+result.toString());
+                        if(result.getResultCode() == RESULT_OK && result.getData()!=null){
+                            WebInfo webInfo = (WebInfo) result.getData().getSerializableExtra("result");
+                            String urlString = webInfo.getWebUrl();
+                            Log.d("TAG", "已获取数据: "+webInfo.getWebTitle().toString());
+                            tv_url.setText(urlString);
+                            wv_mainWebpage.loadUrl(urlString);
+
+                        }
+                    }
+                });
+
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -80,6 +110,18 @@ public class FrameActivity extends AppCompatActivity {
 
         wv_mainWebpage.loadUrl(urlString);
 
+        //设置带返回参数的跳转activity
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if(result.getResultCode()==RESULT_OK && result.getData()!=null){
+                            String urlData = result.getData().getStringExtra("result_url");
+                            tv_url.setText(urlData);
+                        }
+
+                    }
+                });
 
     }
 
@@ -126,6 +168,7 @@ public class FrameActivity extends AppCompatActivity {
     public void browseSavedBookmark(View view) {
         Intent intent = new Intent(this,SavedBookmarkActivity.class);
 //        startActivity(intent);
-        startActivityForResult(intent,REQUEST_CODE);
+        activityResultLauncher.launch(intent);
+
     }
 }
