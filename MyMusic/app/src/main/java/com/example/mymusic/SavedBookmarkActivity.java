@@ -21,7 +21,9 @@ import com.example.mymusic.adapter.MyBookmarkListAdapter;
 import com.example.mymusic.data.WebInfo;
 import com.example.mymusic.utils.DatabaseHelper;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingDeque;
 
@@ -92,7 +94,18 @@ public class SavedBookmarkActivity extends AppCompatActivity {
         builder.setNeutralButton("删除", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //选择删除按钮
+                //选择删除按钮,按ID删除当前条目，更新所有书签排列序号
+
+                Log.d("TAG", "删除前列表: "+ Arrays.toString(mWebInfoList.toArray()) );//打印列表供测试
+
+                int webInfoId = mWebInfoList.get(position).getId();
+                int deletedRows = deleteBookmarkById(webInfoId);
+                Log.d("TAG", "deletedRows: "+deletedRows);
+                mWebInfoList.remove(position);
+                updateBookmarkListOrder(mWebInfoList);
+                Log.d("TAG", "删除后的列表: "+ Arrays.toString(mWebInfoList.toArray()) );//打印列表供测试
+                recreate(); //重新加载页面
+
             }
         });
 
@@ -102,17 +115,36 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                 String newTitle = editText.getText().toString().trim();
                 int webInfoId = mWebInfoList.get(position).getId();
                 Log.d("TAG", "newTitle: "+newTitle+",ID:"+webInfoId);
-                //按ID更新数据库
+                //按ID更新数据库中的title
+                int updatedRows = updateBookmarkTitleById(webInfoId,newTitle);
 
-                Log.d("TAG", "修改后保存: ");
+                Log.d("TAG", "修改后保存,更新数据条目："+updatedRows);
                 recreate(); //重新加载页面
             }
         });
 
 
-
         builder.show();
 
+    }
+
+    private int deleteBookmarkById(int webInfoId) {
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        int deletedRows = databaseHelper.deleteBookmarkById(webInfoId);
+        return deletedRows;
+    }
+
+    //传入新的列表，重新排序
+    private void updateBookmarkListOrder(List<WebInfo> newWebInfoList){
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        //更新数据库内数据排序
+        databaseHelper.updateBookmarkListOrderNum(newWebInfoList);
+    }
+
+    private int updateBookmarkTitleById(int webInfoId, String newTitle) {
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        int updatedRows = databaseHelper.updataTitleById(webInfoId,newTitle);
+        return updatedRows;
     }
 
     private void initDatas() {

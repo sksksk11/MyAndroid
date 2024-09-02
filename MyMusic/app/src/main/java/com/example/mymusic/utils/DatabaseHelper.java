@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 import com.example.mymusic.R;
 import com.example.mymusic.data.WebInfo;
 
+import java.util.List;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "my_database.db";
@@ -25,6 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NUMBER = "number";
     public static final String COLUMN_CATEGORY = "category";
     public static final String COLUMN_ICON = "icon";
+    public static final String COLUMN_ISDEL = "isdel";
 
     private Context mContext;
 
@@ -49,7 +52,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_WEBTITLE + " TEXT,"
                 + COLUMN_NUMBER + " INTEGER,"
                 + COLUMN_CATEGORY + " TEXT,"
-                + COLUMN_ICON + " INTEGER"
+                + COLUMN_ICON + " INTEGER,"
+                + COLUMN_ISDEL + " TEXT"
                 + ")";
         db.execSQL(createTableQuery);
 
@@ -83,6 +87,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_WEBTITLE,title);
             values.put(COLUMN_NUMBER,number);
             values.put(COLUMN_ICON,R.drawable.bm_default);
+            values.put(COLUMN_ISDEL,"N");
             db.insert(TABLE_NAME_WEBURLS,null,values);
             db.close();
         }
@@ -112,7 +117,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getOneWebUrlByWebUrl(String webUrl){
 
         SQLiteDatabase db = getReadableDatabase();
-        String QuerySql = "select * from "+TABLE_NAME_WEBURLS +" where " +COLUMN_WEBURL + " = '" + webUrl +"'";
+        String QuerySql = "select * from "+TABLE_NAME_WEBURLS +" where " +COLUMN_WEBURL + " = '" + webUrl +"' AND "+COLUMN_ISDEL + " = 'N'";
         Log.d("TAG", "QuerySql: "+QuerySql);
         Cursor cursor = db.rawQuery(QuerySql, null);
 
@@ -123,7 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int getTotalAmount(){
         int dataAmount = 0;
         SQLiteDatabase db = getReadableDatabase();
-        String QuerySql = "select count(*) from "+TABLE_NAME_WEBURLS ;
+        String QuerySql = "select count(*) from "+TABLE_NAME_WEBURLS + " where " + COLUMN_ISDEL + " = 'N'";
         Cursor cursor = db.rawQuery(QuerySql, null);
 //        cursor.moveToFirst();
         if(cursor.moveToFirst()){
@@ -137,7 +142,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getAllBookmarks(){
 
         SQLiteDatabase db = getReadableDatabase();
-        String QuerySql = "select * from "+TABLE_NAME_WEBURLS ;
+        String QuerySql = "select * from "+TABLE_NAME_WEBURLS + " where " + COLUMN_ISDEL + " = 'N'";
         Log.d("TAG", "QuerySql: "+QuerySql);
         Cursor cursor = db.rawQuery(QuerySql, null);
 
@@ -145,10 +150,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    //按ID更新标题
+    //按ID更新标题,返回更新数据量
+    public int updataTitleById(int id ,String newTitle){
+
+        String stringId = id+"";
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_WEBTITLE,newTitle);
+        int updatedRows = db.update(TABLE_NAME_WEBURLS,values,COLUMN_ID+" = ?",new String[]{stringId});
+        return updatedRows;
+
+    }
 
 
-    //按ID删除数据
+    //按ID标记需要删除数据
+    public int deleteBookmarkById(int id){
+        String stringId = id+"";
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ISDEL,"Y");
+        int deleteRows = db.update(TABLE_NAME_WEBURLS,values,COLUMN_ID+" = ?",new String[]{stringId});
+        return deleteRows;
+    }
 
+    //按当前列表条目数量，重新更新排序，在删除条目后更新排序序号用
+    //传入当前列表，按条目数量更新排序序号
+    public int updateBookmarkListOrderNum(List<WebInfo> bookmarkList){
+        int updateRows = 0;
+        //传入列表不为空时才更新序号
+        if(bookmarkList != null){
+            SQLiteDatabase db = getWritableDatabase();
+            for (int i = 0; i < bookmarkList.size(); i++) {
+
+                ContentValues values = new ContentValues();
+                values.put(COLUMN_NUMBER,i+1);
+                String stringId = bookmarkList.get(i).getId() + "";
+                db.update(TABLE_NAME_WEBURLS,values,COLUMN_ID+" = ? AND "+COLUMN_ISDEL+ " = 'N'",new String[]{stringId});
+
+            }
+
+            updateRows = bookmarkList.size();
+        }
+
+        return updateRows;
+    }
 
 }

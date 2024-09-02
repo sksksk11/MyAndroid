@@ -7,7 +7,8 @@ import java.io.Serializable;
 //用 Serializable 接口实现 序列化实例，将对象转换成可存储或可传输的状态
 public class WebInfo implements Serializable {
     private int number,icon,id;    //页面排序编码
-    private String webUrl,webTitle,category;    //页面地址,标题,分类,图标
+    private String webUrl,webTitle,category,is_del;    //页面地址,标题,分类,图标
+
 
     public WebInfo(String webUrl, String webTitle) {
         this.webUrl = webUrl;
@@ -21,9 +22,12 @@ public class WebInfo implements Serializable {
         this.id  = id;
     }
 
-    public int getId() {
-        return id;
-    }
+    public String isIs_del() {     return is_del;   }
+    public void setIs_del(String is_del) {      this.is_del = is_del;   }
+
+    public int getId() {    return id;   }
+
+    private void setId(int id) {   this.id = id;   }
 
     public int getNumber() {
         return number;
@@ -70,6 +74,7 @@ public class WebInfo implements Serializable {
         return "WebInfo{" +
                 "number=" + number +
                 ", icon=" + icon +
+                ", id=" + id +
                 ", webUrl='" + webUrl + '\'' +
                 ", webTitle='" + webTitle + '\'' +
                 ", category='" + category + '\'' +
