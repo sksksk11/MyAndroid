@@ -9,12 +9,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -97,16 +99,30 @@ public class FrameActivity extends AppCompatActivity {
 
         //让WebView支持JavaScript脚本
         wv_mainWebpage.getSettings().setJavaScriptEnabled(true);
-        //当需要从一个网页跳转到另一个网页时，目标网页仍然在当前WebView中显示，而不是打开系统浏览器。
+        wv_mainWebpage.getSettings().setDomStorageEnabled(true);
+        wv_mainWebpage.getSettings().setMediaPlaybackRequiresUserGesture(false);  // 允许自动播放
+        wv_mainWebpage.getSettings().setPluginState(WebSettings.PluginState.ON);
 
+        //当需要从一个网页跳转到另一个网页时，目标网页仍然在当前WebView中显示，而不是打开系统浏览器。
         wv_mainWebpage.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String openningUrl = request.getUrl().toString();
-                tv_url.setText(openningUrl);
-                Toast.makeText(mContext,"正在打开"+openningUrl,Toast.LENGTH_SHORT).show();
+                if(openningUrl.startsWith("http://") || openningUrl.startsWith("https://")){    //加载的url是http/https协议地址
+                    tv_url.setText(openningUrl);
+                    Toast.makeText(mContext,"正在打开"+openningUrl,Toast.LENGTH_SHORT).show();
+                    wv_mainWebpage.loadUrl(openningUrl);
+                    return false;  //返回false表示此url默认由系统处理,url未加载完成，会继续往下走
+                }else{  //加载的url是自定义协议地址
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(openningUrl));
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                }
 
-                return false;
 
             }
 
@@ -119,8 +135,7 @@ public class FrameActivity extends AppCompatActivity {
             }
         });
 
-        wv_mainWebpage.loadUrl(urlString);
-
+//        wv_mainWebpage.loadUrl(urlString);
 
 
         //设置带返回参数的跳转activity
