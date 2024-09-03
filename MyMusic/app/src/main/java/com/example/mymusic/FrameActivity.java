@@ -7,12 +7,14 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -32,6 +34,7 @@ public class FrameActivity extends AppCompatActivity {
     private DatabaseHelper mDatabaseHelper;
     private static final int REQUEST_CODE = 100 ;   //选择书签返回参数
     private ActivityResultLauncher<Intent> activityResultLauncher ;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,7 @@ public class FrameActivity extends AppCompatActivity {
         tv_url = findViewById(R.id.et_url);
         wv_mainWebpage = findViewById(R.id.wv_mainWebpage);
         btn_collect = findViewById(R.id.btn_collect);
+        mContext = this;
 
         String urlString = "http://www.163.com";
 
@@ -94,21 +98,30 @@ public class FrameActivity extends AppCompatActivity {
         //让WebView支持JavaScript脚本
         wv_mainWebpage.getSettings().setJavaScriptEnabled(true);
         //当需要从一个网页跳转到另一个网页时，目标网页仍然在当前WebView中显示，而不是打开系统浏览器。
+
         wv_mainWebpage.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String openningUrl = request.getUrl().toString();
+                tv_url.setText(openningUrl);
+                Toast.makeText(mContext,"正在打开"+openningUrl,Toast.LENGTH_SHORT).show();
+
+                return false;
+
+            }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 loadedUrl = view.getUrl();  //页面加载完成后，获取页面url
                 tv_url.setText(loadedUrl);
                 webTitle = view.getTitle();
-//                Log.d("tag", "webTitle: "+webTitle);
             }
-
-
-
         });
 
         wv_mainWebpage.loadUrl(urlString);
+
+
 
         //设置带返回参数的跳转activity
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
