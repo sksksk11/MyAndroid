@@ -171,4 +171,9 @@ public class FrameActivity extends AppCompatActivity {
         activityResultLauncher.launch(intent);
 
     }
+
+    public void clearWebUrl(View view) {
+        tv_url.setText("");
+        tv_url.requestFocus();
+    }
 }

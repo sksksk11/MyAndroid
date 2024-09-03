@@ -28,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Frame页面"
+        android:visibility="gone"
         />
 
     <LinearLayout
@@ -42,6 +43,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/music"
+            android:onClick="showPage"
             />
         <TextView
             android:id="@+id/tv_bottom_song_name"
