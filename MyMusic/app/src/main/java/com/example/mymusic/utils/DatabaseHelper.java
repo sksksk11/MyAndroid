@@ -142,7 +142,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getAllBookmarks(){
 
         SQLiteDatabase db = getReadableDatabase();
-        String QuerySql = "select * from "+TABLE_NAME_WEBURLS + " where " + COLUMN_ISDEL + " = 'N'";
+        String QuerySql = "select * from "+TABLE_NAME_WEBURLS + " where " + COLUMN_ISDEL + " = 'N' ORDER BY " + COLUMN_NUMBER;
         Log.d("TAG", "QuerySql: "+QuerySql);
         Cursor cursor = db.rawQuery(QuerySql, null);
 
@@ -181,7 +181,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(bookmarkList != null){
             SQLiteDatabase db = getWritableDatabase();
             for (int i = 0; i < bookmarkList.size(); i++) {
-
+//                Log.d("TAG", "title: "+bookmarkList.get(i).getWebTitle()+" ,id:"+bookmarkList.get(i).getId());
                 ContentValues values = new ContentValues();
                 values.put(COLUMN_NUMBER,i+1);
                 String stringId = bookmarkList.get(i).getId() + "";
@@ -193,6 +193,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return updateRows;
+    }
+
+    //传入列表，更新条目的顺序
+    public void updateAllBookmarkOrder(List<WebInfo> bookmarkList){
+
+
     }
 
 }

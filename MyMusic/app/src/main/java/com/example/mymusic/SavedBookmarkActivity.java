@@ -23,11 +23,9 @@ import com.example.mymusic.data.WebInfo;
 import com.example.mymusic.utils.DatabaseHelper;
 import com.example.mymusic.utils.MyItemTouchHelperCallback;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.BlockingDeque;
 
 public class SavedBookmarkActivity extends AppCompatActivity {
 
@@ -143,10 +141,11 @@ public class SavedBookmarkActivity extends AppCompatActivity {
     }
 
     //传入新的列表，重新排序
-    private void updateBookmarkListOrder(List<WebInfo> newWebInfoList){
+    private int updateBookmarkListOrder(List<WebInfo> newWebInfoList){
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         //更新数据库内数据排序
-        databaseHelper.updateBookmarkListOrderNum(newWebInfoList);
+        int updateRows = databaseHelper.updateBookmarkListOrderNum(newWebInfoList);
+        return updateRows;
     }
 
     private int updateBookmarkTitleById(int webInfoId, String newTitle) {
@@ -165,7 +164,7 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                 @SuppressLint("Range") String url = cursor.getString(cursor.getColumnIndex(databaseHelper.COLUMN_WEBURL));
                 @SuppressLint("Range") int icon = cursor.getInt(cursor.getColumnIndex(databaseHelper.COLUMN_ICON));
                 @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(databaseHelper.COLUMN_ID));
-                Log.d("TAG", "id: "+id +"title: "+title +" ,url:"+url+" ,icon:"+icon);
+                Log.d("TAG", "id: "+id +" , title: "+title +" ,url:"+url+" ,icon:"+icon);
 
                 WebInfo webInfo = new WebInfo(url,title,icon,id);
                 mWebInfoList.add(webInfo);
@@ -188,5 +187,9 @@ public class SavedBookmarkActivity extends AppCompatActivity {
         List<WebInfo> newWebInfoList = myBookmarkListAdapter.getWebInfoList();
         Log.d("TAG", "当前列表: "+newWebInfoList.toString());
         //保存到数据库
+        int updateRows = updateBookmarkListOrder(newWebInfoList);
+        recreate();
+        Toast.makeText(this,"已更新列表顺序："+updateRows,Toast.LENGTH_SHORT).show();
+
     }
 }

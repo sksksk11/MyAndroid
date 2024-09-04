@@ -49,7 +49,7 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-        adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+        //adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
     }
 
     @Override
@@ -71,6 +71,6 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
         super.clearView(recyclerView, viewHolder);
     }
 
-    
+
 
 }
