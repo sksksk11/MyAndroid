@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,6 +29,8 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
     private onItemClickListener mItemClickListener;
     private onLongClickListener mOnLongClickListener;
 
+
+
     public MyBookmarkListAdapter(List<WebInfo> webInfoList, Context context) {
         mWebInfoList = webInfoList;
         mContext = context;
@@ -38,6 +41,7 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
         private ImageView iv_icon;
         private TextView et_pageTitle, et_pageUrl;
         public LinearLayout ll_container;
+        private Button btn_delete;
 
         public MybookmarkViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -45,7 +49,7 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
             et_pageTitle = itemView.findViewById(R.id.et_Pagetitle);
             et_pageUrl = itemView.findViewById(R.id.et_pageUrl);
             ll_container = itemView.findViewById(R.id.ll_container);
-
+            btn_delete = itemView.findViewById(R.id.btn_delete);
 
         }
 

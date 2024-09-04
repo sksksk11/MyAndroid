@@ -54,7 +54,7 @@ public class SavedBookmarkActivity extends AppCompatActivity {
 
         myBookmarkListAdapter = new MyBookmarkListAdapter(mWebInfoList,this);
 
-        MyItemTouchHelperCallback callback = new MyItemTouchHelperCallback(myBookmarkListAdapter);
+        MyItemTouchHelperCallback callback = new MyItemTouchHelperCallback(myBookmarkListAdapter,mRecyclerView,getBaseContext());
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
