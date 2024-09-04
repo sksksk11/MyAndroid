@@ -29,6 +29,7 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
         // 定义拖动和滑动的方向
         int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
         int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+//        int swipeFlags = 0; //禁用滑动功能
 
         return makeMovementFlags(dragFlags,swipeFlags);
     }
@@ -49,7 +50,7 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-        //adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+        adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
     }
 
     @Override
