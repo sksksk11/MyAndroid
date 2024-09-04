@@ -11,7 +11,17 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_savedBookmark"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
 
+        />
+    <Button
+        android:id="@+id/btn_saveSort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="保存排序"
+        android:layout_gravity="right"
+        android:layout_marginRight="10dp"
+        android:onClick="saveListSort"
         />
 </LinearLayout>

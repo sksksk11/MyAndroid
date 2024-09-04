@@ -2,6 +2,7 @@ package com.example.mymusic;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.example.mymusic.adapter.MyBookmarkListAdapter;
 import com.example.mymusic.data.WebInfo;
 import com.example.mymusic.utils.DatabaseHelper;
+import com.example.mymusic.utils.MyItemTouchHelperCallback;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ public class SavedBookmarkActivity extends AppCompatActivity {
     private List<WebInfo> mWebInfoList = new ArrayList<>();
     private TextView tv_title;
     private MyBookmarkListAdapter.onItemClickListener mItemClickListener;
+    private MyBookmarkListAdapter myBookmarkListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,12 @@ public class SavedBookmarkActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        MyBookmarkListAdapter myBookmarkListAdapter = new MyBookmarkListAdapter(mWebInfoList,this);
+        myBookmarkListAdapter = new MyBookmarkListAdapter(mWebInfoList,this);
+
+        MyItemTouchHelperCallback callback = new MyItemTouchHelperCallback(myBookmarkListAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
+
         mRecyclerView.setAdapter(myBookmarkListAdapter);
 
         //调用接口获取点击的数据
@@ -173,5 +181,12 @@ public class SavedBookmarkActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.rv_savedBookmark);
 
 
+    }
+
+    public void saveListSort(View view) {
+        //点击按钮，保存当前列表顺序到数据库
+        List<WebInfo> newWebInfoList = myBookmarkListAdapter.getWebInfoList();
+        Log.d("TAG", "当前列表: "+newWebInfoList.toString());
+        //保存到数据库
     }
 }

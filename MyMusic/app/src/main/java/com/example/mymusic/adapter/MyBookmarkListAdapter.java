@@ -120,6 +120,8 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
         return mWebInfoList == null ? 0:mWebInfoList.size();
     }
 
+
+
     //点击选择item的接口
     public interface onItemClickListener{
         void onItemSelected(int position);
@@ -137,6 +139,11 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
 
     public void setLongClickListener(onLongClickListener itemLongClickListener){
         mOnLongClickListener = itemLongClickListener;
+    }
+
+    public List<WebInfo> getWebInfoList(){
+
+        return mWebInfoList;
     }
 
 }
