@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.example.mymusic.adapter.MyBookmarkListAdapter;
 import com.example.mymusic.data.WebInfo;
 import com.example.mymusic.utils.DatabaseHelper;
+import com.example.mymusic.utils.ListTools;
 import com.example.mymusic.utils.MyItemTouchHelperCallback;
 
 import java.util.ArrayList;
@@ -31,9 +33,11 @@ public class SavedBookmarkActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView ;
     private List<WebInfo> mWebInfoList = new ArrayList<>();
+    private List<WebInfo> initialList = new ArrayList<>();  //保存初始列表
     private TextView tv_title;
     private MyBookmarkListAdapter.onItemClickListener mItemClickListener;
     private MyBookmarkListAdapter myBookmarkListAdapter;
+    private Button btn_keyWord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,14 +77,16 @@ public class SavedBookmarkActivity extends AppCompatActivity {
             }
         });
 
-        //调用长按接口
+//        调用长按接口,先禁用避免与拖拽冲突，改用侧滑按钮实现
         myBookmarkListAdapter.setLongClickListener(new MyBookmarkListAdapter.onLongClickListener() {
             @Override
             public void onItemLongSelected(int position) {
                 Log.d("TAG", "长按接口调用: "+position);
-                showEditDialog(position);
+//                showEditDialog(position);
             }
         });
+
+
 
         //调用删除按钮接口
         myBookmarkListAdapter.setOndeleteButtonClickListener(new MyBookmarkListAdapter.deleteButtonClicked() {
@@ -122,7 +128,6 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                 updateBookmarkListOrder(mWebInfoList);
                 Log.d("TAG", "删除后的列表: "+ Arrays.toString(mWebInfoList.toArray()) );//打印列表供测试
                 recreate(); //重新加载页面
-
             }
         });
 
@@ -139,11 +144,9 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                 recreate(); //重新加载页面
             }
         });
-
-
         builder.show();
-
     }
+
 
     private int deleteBookmarkById(int webInfoId) {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
@@ -175,21 +178,24 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                 @SuppressLint("Range") String url = cursor.getString(cursor.getColumnIndex(databaseHelper.COLUMN_WEBURL));
                 @SuppressLint("Range") int icon = cursor.getInt(cursor.getColumnIndex(databaseHelper.COLUMN_ICON));
                 @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(databaseHelper.COLUMN_ID));
+//                @SuppressLint("Range") int Num = cursor.getInt(cursor.getColumnIndex(databaseHelper.COLUMN_NUMBER));
                 Log.d("TAG", "id: "+id +" , title: "+title +" ,url:"+url+" ,icon:"+icon);
 
                 WebInfo webInfo = new WebInfo(url,title,icon,id);
                 mWebInfoList.add(webInfo);
+                //同时复制一份到初始列表里
+                initialList.add(webInfo);
 
             }while (cursor.moveToNext());
-
             cursor.close();
+
         }
 
     }
 
     private void initView() {
         mRecyclerView = findViewById(R.id.rv_savedBookmark);
-
+        btn_keyWord = findViewById(R.id.btn_keyWord);
 
     }
 
@@ -203,4 +209,39 @@ public class SavedBookmarkActivity extends AppCompatActivity {
         Toast.makeText(this,"已更新列表顺序："+updateRows,Toast.LENGTH_SHORT).show();
 
     }
+
+
+    @Override
+    public void onBackPressed() {
+
+        List<WebInfo> newWebInfoList = myBookmarkListAdapter.getWebInfoList();
+        if(!ListTools.compareListOrder(initialList,newWebInfoList)) {
+            new AlertDialog.Builder(this)
+                    .setMessage("书签顺序已改变，是否保存？")
+                    .setPositiveButton("保存", (dialog, which) -> {
+                        // 用户选择保存数据
+                        // 可能需要执行的其他操作，例如关闭活动
+                        saveListSort(null);
+                        finish();
+                    })
+                    .setNegativeButton("取消", (dialog, which) -> {
+                        // 用户选择放弃数据
+                        // 通常不需要执行任何操作，因为活动会保持在当前状态
+
+                    })
+                    .setNeutralButton("退出", (dialog, which) -> {
+                        // 用户选择取消操作，不退出活动
+                        // 可能需要执行的其他操作，例如关闭活动
+
+                        finish();
+                    })
+                    .show();
+
+        }else{
+            super.onBackPressed();
+        }
+
+
+    }
+
 }

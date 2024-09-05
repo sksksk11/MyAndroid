@@ -108,9 +108,6 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
         }
 
 
-        Log.d("TAG", "menuView: 8");
-
-
     }
 
 
@@ -119,7 +116,7 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
         if(actionState!= ItemTouchHelper.ACTION_STATE_IDLE){
             viewHolder.itemView.setBackgroundColor(viewHolder.itemView.getContext().getResources().getColor(android.R.color.holo_blue_light));
         }
-        Log.d("TAG", "menuView: 3");
+
         super.onSelectedChanged(viewHolder, actionState);
 
     }
