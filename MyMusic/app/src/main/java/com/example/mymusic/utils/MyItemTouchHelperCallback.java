@@ -79,8 +79,38 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
                 //根据dx的值调整按钮的位置
                 deleteButton.setTranslationX(dX);
             }
+
+            // 遍历所有可见的 items 并隐藏它们的删除按钮
+            for (int i = 0; i < recyclerView.getChildCount(); i++) {
+                View child = recyclerView.getChildAt(i);
+                RecyclerView.ViewHolder viewHolderChild = recyclerView.getChildViewHolder(child);
+                if (viewHolderChild != viewHolder && viewHolderChild.getAdapterPosition() != RecyclerView.NO_POSITION) {
+                    View button = child.findViewById(R.id.btn_delete);
+                    if (button != null) {
+                        button.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+
+        }else {
+            // 如果没有侧滑动作或者侧滑动作不活跃，隐藏所有删除按钮
+            for (int i = 0; i < recyclerView.getChildCount(); i++) {
+                View child = recyclerView.getChildAt(i);
+                RecyclerView.ViewHolder viewHolderChild = recyclerView.getChildViewHolder(child);
+                if (viewHolderChild.getAdapterPosition() != RecyclerView.NO_POSITION) {
+                    View button = child.findViewById(R.id.btn_delete);
+                    if (button != null) {
+                        button.setVisibility(View.GONE);
+                    }
+                }
+            }
         }
+
+
         Log.d("TAG", "menuView: 8");
+
+
     }
 
 
@@ -97,13 +127,15 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         viewHolder.itemView.setBackgroundColor(0);
-        super.clearView(recyclerView, viewHolder);
+
 
         View deleteButton = viewHolder.itemView.findViewById(R.id.btn_delete);
         if(deleteButton!=null){
             //隐藏删除按钮
                 deleteButton.setVisibility(View.GONE);
             }
+
+        super.clearView(recyclerView, viewHolder);
     }
 
     @Override

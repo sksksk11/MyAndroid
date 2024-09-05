@@ -82,7 +82,18 @@ public class SavedBookmarkActivity extends AppCompatActivity {
             }
         });
 
-
+        //调用删除按钮接口
+        myBookmarkListAdapter.setOndeleteButtonClickListener(new MyBookmarkListAdapter.deleteButtonClicked() {
+            @Override
+            public void onItemDismiss(int position) {
+                int webInfoId = mWebInfoList.get(position).getId();
+                deleteBookmarkById(webInfoId);
+                mWebInfoList.remove(position);
+                //通过删除按钮删除
+                Log.d("TAG", "通过删除按钮删除: "+position);
+                recreate();
+            }
+        });
 
 
     }

@@ -29,11 +29,20 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
     private onItemClickListener mItemClickListener;
     private onLongClickListener mOnLongClickListener;
 
-
+    private deleteButtonClicked mDeleteButtonClicked;
 
     public MyBookmarkListAdapter(List<WebInfo> webInfoList, Context context) {
         mWebInfoList = webInfoList;
         mContext = context;
+
+//        mDeleteItemButton = new deleteItemButton() {
+//            @Override
+//            public void onItemDismiss(int position) {
+//                Log.d("TAG", "通过接口删除: "+position);
+//                mWebInfoList.remove(position);
+//                notifyItemRemoved(position);
+//            }
+//        };
     }
 
     class MybookmarkViewHolder extends RecyclerView.ViewHolder{
@@ -57,6 +66,16 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
 //            iv_icon.setImageResource(R.id.);
             et_pageTitle.setText(webInfo.getWebTitle());
             et_pageUrl.setText(webInfo.getWebUrl());
+            //删除按钮
+            btn_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("TAG", "delete: "+getAdapterPosition());
+                    mDeleteButtonClicked.onItemDismiss(getAdapterPosition());
+                }
+            });
+
+
         }
     }
 
@@ -148,6 +167,16 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
     public List<WebInfo> getWebInfoList(){
 
         return mWebInfoList;
+    }
+
+    //删除按钮item接口
+    public interface deleteButtonClicked{
+        void onItemDismiss(int position);   //删除item
+
+    }
+
+    public void setOndeleteButtonClickListener(deleteButtonClicked deleteButtonClicked){
+        this.mDeleteButtonClicked = deleteButtonClicked;
     }
 
 }
