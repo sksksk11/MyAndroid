@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ import com.example.mymusic.utils.MyItemTouchHelperCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class SavedBookmarkActivity extends AppCompatActivity {
@@ -38,6 +41,8 @@ public class SavedBookmarkActivity extends AppCompatActivity {
     private MyBookmarkListAdapter.onItemClickListener mItemClickListener;
     private MyBookmarkListAdapter myBookmarkListAdapter;
     private Button btn_keyWord;
+
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +92,7 @@ public class SavedBookmarkActivity extends AppCompatActivity {
         });
 
 
-
-        //调用删除按钮接口
+        //调用删除按钮接口、配置按钮接口
         myBookmarkListAdapter.setOndeleteButtonClickListener(new MyBookmarkListAdapter.deleteButtonClicked() {
             @Override
             public void onItemDismiss(int position) {
@@ -98,6 +102,48 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                 //通过删除按钮删除
                 Log.d("TAG", "通过删除按钮删除: "+position);
                 recreate();
+            }
+
+            @Override
+            public void onItemConfig(int position) {
+                Log.d("TAG", "点击配置按钮: "+position);
+                WebInfo webInfo = mWebInfoList.get(position);
+                int webinfoId=  webInfo.getId();
+
+                //弹出配置对话框，编辑WebInfo的标题、分类、icon
+                LinearLayout layout = new LinearLayout(mContext);
+                layout.setOrientation(LinearLayout.VERTICAL);
+
+                EditText et_title = new EditText(mContext);
+                et_title.setText(webInfo.getWebTitle());
+                et_title.setHint("输入标题");
+                layout.addView(et_title);
+
+                EditText et_category = new EditText(mContext);
+                et_category.setText(webInfo.getCategory());
+                et_category.setHint("输入类别");
+                layout.addView(et_category);
+
+                new AlertDialog.Builder(mContext )
+                        .setMessage("修改书签信息")
+                        .setView(layout)
+                        .setPositiveButton("保存",(dialog, which) -> {
+                            //保存修改后的书签信息
+                            String newTitle = et_title.getText().toString().trim();
+                            String newCategory = et_category.getText().toString().trim();
+                            //按id更新数据库
+                            int updateRows = updateBookmarkTitleById(webinfoId,newTitle);
+
+                            recreate();
+                        })
+                        .setNegativeButton("取消",(dialog, which) -> {
+
+                        })
+                        .show();
+
+                //传入WebInfo对象更新数据库
+
+
             }
         });
 
@@ -196,6 +242,7 @@ public class SavedBookmarkActivity extends AppCompatActivity {
     private void initView() {
         mRecyclerView = findViewById(R.id.rv_savedBookmark);
         btn_keyWord = findViewById(R.id.btn_keyWord);
+        mContext = this;
 
     }
 
@@ -244,4 +291,19 @@ public class SavedBookmarkActivity extends AppCompatActivity {
 
     }
 
+    public void showKeyWord(View view) {
+        //点击关键词按钮
+
+        //测试，待删，将列表第3位移动到第一位
+        List<String> stringList = new ArrayList<>();
+        stringList.add("1");
+        stringList.add("2");
+        stringList.add("3");
+        stringList.add("4");
+
+        Log.d("TAG", "变更前: "+stringList.toString());
+        stringList.add(3,stringList.remove(2));
+        Log.d("TAG", "变更后: "+stringList.toString());
+
+    }
 }

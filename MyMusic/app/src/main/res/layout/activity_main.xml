@@ -36,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:background="@color/purple_200"
+        android:background="@color/colorPrimary"
         >
 
         <ImageView
@@ -45,6 +45,7 @@
             android:layout_height="60dp"
             android:src="@drawable/music"
             android:onClick="showPage"
+
             />
         <TextView
             android:id="@+id/tv_bottom_song_name"

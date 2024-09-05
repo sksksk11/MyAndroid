@@ -14,16 +14,36 @@
         android:layout_weight="1"
         />
 
-    <EditText
-        android:id="@+id/et_url"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="66dp"
-        android:layout_marginLeft="@dimen/lpadding"
-        android:layout_marginRight="@dimen/lpadding"
-        android:layout_marginTop="@dimen/lpadding"
-        android:hint="请输入网址"
-        android:gravity="center_vertical"
-        />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <EditText
+            android:id="@+id/et_url"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="66dp"
+            android:layout_marginLeft="@dimen/lpadding"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="@dimen/lpadding"
+            android:hint="请输入网址"
+            android:gravity="center_vertical"
+            />
+        <Button
+            android:id="@+id/btn_go"
+            android:layout_width="49dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="GO"
+            android:maxLines="1"
+            android:textSize="10sp"
+            android:layout_marginRight="@dimen/lpadding"
+            android:onClick="openWebUrl"
+            />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,15 +80,7 @@
             android:layout_marginRight="@dimen/lpadding"
             android:onClick="clearWebUrl" />
 
-        <Button
-            android:id="@+id/btn_go"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="GO"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="@dimen/lpadding"
-            android:onClick="openWebUrl"
+
             />
 
     </LinearLayout>

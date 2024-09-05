@@ -3,14 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Android/MyAndroid/MyAndroid/MyMusic/app/src/main/res/layout/activity_frame.xml" value="0.2" />
+        <entry key="..\:/Android/MyAndroid/MyAndroid/MyMusic/app/src/main/res/layout/activity_frame.xml" value="0.264" />
         <entry key="..\:/Android/MyAndroid/MyAndroid/MyMusic/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Android/MyAndroid/MyAndroid/MyMusic/app/src/main/res/layout/activity_music_play.xml" value="0.2" />
         <entry key="..\:/Android/MyAndroid/MyAndroid/MyMusic/app/src/main/res/layout/activity_saved_bookmark.xml" value="0.2" />
         <entry key="..\:/Android/MyAndroid/MyAndroid/MyMusic/app/src/main/res/layout/activity_swipe_layout.xml" value="0.21770833333333334" />
-        <entry key="..\:/Android/MyAndroid/MyAndroid/MyMusic/app/src/main/res/layout/bookmark.xml" value="0.264" />
+        <entry key="..\:/Android/MyAndroid/MyAndroid/MyMusic/app/src/main/res/layout/bookmark.xml" value="0.2" />
         <entry key="..\:/Android/MyAndroid/MyAndroid/MyMusic/app/src/main/res/layout/song_item_layout.xml" value="0.2" />
         <entry key="..\:/Android/MyAndroid/MyAndroid/MyMusic/app/src/main/res/layout/swipe_menu_layout.xml" value="0.21770833333333334" />
+        <entry key="..\:/Android/MyAndroid/MyAndroid/MyMusic/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
       </map>
     </option>
   </component>

@@ -60,10 +60,12 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 //        adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
 //        Log.d("TAG", "menuView: 9");
-        View deleteButton = viewHolder.itemView.findViewById(R.id.btn_delete);
+        View deleteButton = viewHolder.itemView.findViewById(R.id.iv_delete);
+        View btn_config = viewHolder.itemView.findViewById(R.id.iv_config);
         if(deleteButton!=null){
             //隐藏删除按钮
             deleteButton.setVisibility(View.GONE);
+            btn_config.setVisibility(View.GONE);
         }
     }
 
@@ -72,12 +74,15 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         //仅在侧滑时绘制
         if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
-            View deleteButton = viewHolder.itemView.findViewById(R.id.btn_delete);
+            View deleteButton = viewHolder.itemView.findViewById(R.id.iv_delete);
+            View configButton = viewHolder.itemView.findViewById(R.id.iv_config);
             if(deleteButton!=null){
                 //显示删除按钮
                 deleteButton.setVisibility(View.VISIBLE);
+                configButton.setVisibility(View.VISIBLE);
                 //根据dx的值调整按钮的位置
                 deleteButton.setTranslationX(dX);
+                configButton.setTranslationX(dX);
             }
 
             // 遍历所有可见的 items 并隐藏它们的删除按钮
@@ -85,9 +90,11 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
                 View child = recyclerView.getChildAt(i);
                 RecyclerView.ViewHolder viewHolderChild = recyclerView.getChildViewHolder(child);
                 if (viewHolderChild != viewHolder && viewHolderChild.getAdapterPosition() != RecyclerView.NO_POSITION) {
-                    View button = child.findViewById(R.id.btn_delete);
+                    View button = child.findViewById(R.id.iv_delete);
+                    View btn_config = child.findViewById(R.id.iv_config);
                     if (button != null) {
                         button.setVisibility(View.GONE);
+                        btn_config.setVisibility(View.GONE);
                     }
                 }
             }
@@ -99,9 +106,11 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
                 View child = recyclerView.getChildAt(i);
                 RecyclerView.ViewHolder viewHolderChild = recyclerView.getChildViewHolder(child);
                 if (viewHolderChild.getAdapterPosition() != RecyclerView.NO_POSITION) {
-                    View button = child.findViewById(R.id.btn_delete);
+                    View button = child.findViewById(R.id.iv_delete);
+                    View btn_config = child.findViewById(R.id.iv_config);
                     if (button != null) {
                         button.setVisibility(View.GONE);
+                        btn_config.setVisibility(View.GONE);
                     }
                 }
             }
@@ -126,7 +135,7 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
         viewHolder.itemView.setBackgroundColor(0);
 
 
-        View deleteButton = viewHolder.itemView.findViewById(R.id.btn_delete);
+        View deleteButton = viewHolder.itemView.findViewById(R.id.iv_delete);
         if(deleteButton!=null){
             //隐藏删除按钮
                 deleteButton.setVisibility(View.GONE);
@@ -138,6 +147,8 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
 //        return super.getSwipeThreshold(viewHolder);
-        return 0.9f;  // 设置更高的滑动阈值，例如 0.9，表示用户必须滑动超过视图宽度的 90%
+        return 2f;  // 设置更高的滑动阈值，例如 0.9，表示用户必须滑动超过视图宽度的 90%
     }
+
+
 }

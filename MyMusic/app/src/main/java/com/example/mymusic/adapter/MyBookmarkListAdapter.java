@@ -2,6 +2,7 @@ package com.example.mymusic.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,7 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
         private TextView et_pageTitle, et_pageUrl;
         public LinearLayout ll_container;
         private Button btn_delete;
+        private ImageView iv_delete,iv_config;
 
         public MybookmarkViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,18 +62,39 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
             ll_container = itemView.findViewById(R.id.ll_container);
             btn_delete = itemView.findViewById(R.id.btn_delete);
 
+            iv_delete = itemView.findViewById(R.id.iv_delete);
+            iv_config = itemView.findViewById(R.id.iv_config);
+
         }
 
         private void bind(WebInfo webInfo) {
 //            iv_icon.setImageResource(R.id.);
             et_pageTitle.setText(webInfo.getWebTitle());
             et_pageUrl.setText(webInfo.getWebUrl());
-            //删除按钮
-            btn_delete.setOnClickListener(new View.OnClickListener() {
+            //删除按钮,替换为图片删除按钮
+//            btn_delete.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Log.d("TAG", "delete: "+getAdapterPosition());
+//                    mDeleteButtonClicked.onItemDismiss(getAdapterPosition());
+//                }
+//            });
+
+            iv_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("TAG", "delete: "+getAdapterPosition());
+                    Log.d("TAG", "iv_delete: "+getAdapterPosition());
                     mDeleteButtonClicked.onItemDismiss(getAdapterPosition());
+                }
+            });
+
+            iv_config.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //通过接口传出被点击的位置
+                    Log.d("TAG", "iv_delete: "+getAdapterPosition());
+                    mDeleteButtonClicked.onItemConfig(getAdapterPosition());
+
                 }
             });
 
@@ -171,7 +194,9 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
 
     //删除按钮item接口
     public interface deleteButtonClicked{
-        void onItemDismiss(int position);   //删除item
+        void onItemDismiss(int position);   //删除item用
+
+        void onItemConfig(int position);    //配置item用
 
     }
 
