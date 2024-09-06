@@ -8,6 +8,35 @@
     android:orientation="vertical"
     tools:context=".SavedBookmarkActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/rounded_border"
+        >
+        <EditText
+            android:id="@+id/et_searchBar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="15dp"
+            android:hint="输入搜索..."
+            android:background="@null"
+            />
+        <ImageView
+            android:id="@+id/iv_searchImage"
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/search_green"
+            android:scaleType="centerInside"
+            android:paddingRight="10dp"
+            />
+
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_savedBookmark"
         android:layout_width="match_parent"
