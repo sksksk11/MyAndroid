@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,18 +30,19 @@ import com.example.mymusic.utils.MyItemTouchHelperCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class SavedBookmarkActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView ;
     private List<WebInfo> mWebInfoList = new ArrayList<>();
-    private List<WebInfo> initialList = new ArrayList<>();  //保存初始列表
+    private List<WebInfo> initialList = new ArrayList<>();  //保存初始列表，用于判断是否已更新数据，退出页面时提醒保存
     private TextView tv_title;
     private MyBookmarkListAdapter.onItemClickListener mItemClickListener;
     private MyBookmarkListAdapter myBookmarkListAdapter;
     private Button btn_keyWord;
+    private EditText et_searchBar;
+    private ImageView iv_searchImage,iv_clearSearchText;
 
     private Context mContext;
 
@@ -51,16 +53,18 @@ public class SavedBookmarkActivity extends AppCompatActivity {
 
         //初始化页面
         initView();
+
+        //按文本搜索书签
+        searchMarkbook();
+
         //隐藏输入法
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
 
         //初始化网页数据
         initDatas();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-
         myBookmarkListAdapter = new MyBookmarkListAdapter(mWebInfoList,this);
 
         MyItemTouchHelperCallback callback = new MyItemTouchHelperCallback(myBookmarkListAdapter,mRecyclerView,getBaseContext());
@@ -141,10 +145,12 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                         })
                         .show();
 
-                //传入WebInfo对象更新数据库
+
 
 
             }
+
+
 
             @Override
             public void getItemPosition(String oprCode, int position) {
@@ -174,6 +180,60 @@ public class SavedBookmarkActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void searchMarkbook() {
+        iv_searchImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TAG", "已点击搜索图片");
+                String searchText = et_searchBar.getText().toString().trim();
+                List<WebInfo> webInfoList = new ArrayList<>();
+                List<WebInfo> resultList = new ArrayList<>();  //搜索结果
+                webInfoList.addAll(myBookmarkListAdapter.getWebInfoList());
+
+                if (searchText == null || searchText.length()==0 || webInfoList == null) {
+                    recreate();
+                    return;
+                }else{
+                    Log.d("TAG", "开始搜索: "+searchText);
+                    //获取当前书签列表，查找title和url是否包含查找的文本
+                    for (WebInfo w: webInfoList
+                    ) {
+                        if(w.getWebTitle().contains(searchText) || w.getWebUrl().contains(searchText)){
+                            resultList.add(w);
+                        }
+                    }
+                    //查找到结果
+                    if (resultList.size() > 0 ) {
+                        Log.d("TAG", "搜索到结果: "+resultList.toString());
+                        myBookmarkListAdapter.getWebInfoList().clear();
+                        myBookmarkListAdapter.getWebInfoList().addAll(resultList);
+                        myBookmarkListAdapter.notifyDataSetChanged();
+                        //同步更新初始列表，防止判断位更新列表，弹出保存对话框
+                        initialList.clear();
+                        initialList.addAll(resultList);
+
+                    }else{
+                        Log.d("TAG", "没搜到 ");
+                        //提示没收到结果
+                        Toast.makeText(mContext,"没搜到 :( ",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
+        //当输入文本时，出现X按钮，点击x按钮，重新加载页面 （就自动清空已输入的查询文本）
+        iv_clearSearchText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("TAG", "已点击清空按钮123123");
+                et_searchBar.setText("");
+                et_searchBar.clearFocus();
+                recreate();
+            }
+        });
 
     }
 
@@ -269,6 +329,10 @@ public class SavedBookmarkActivity extends AppCompatActivity {
     private void initView() {
         mRecyclerView = findViewById(R.id.rv_savedBookmark);
         btn_keyWord = findViewById(R.id.btn_keyWord);
+        et_searchBar = findViewById(R.id.et_searchBar);
+        iv_searchImage = findViewById(R.id.iv_searchImage);
+        iv_clearSearchText = findViewById(R.id.iv_clearSearchText);
+
         mContext = this;
 
     }
