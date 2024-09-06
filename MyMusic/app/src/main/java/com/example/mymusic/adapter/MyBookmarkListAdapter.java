@@ -52,7 +52,7 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
         private TextView et_pageTitle, et_pageUrl;
         public LinearLayout ll_container;
         private Button btn_delete;
-        private ImageView iv_delete,iv_config;
+        private ImageView iv_delete,iv_config,iv_toTop,iv_toBottom;
 
         public MybookmarkViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,10 +60,13 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
             et_pageTitle = itemView.findViewById(R.id.et_Pagetitle);
             et_pageUrl = itemView.findViewById(R.id.et_pageUrl);
             ll_container = itemView.findViewById(R.id.ll_container);
-            btn_delete = itemView.findViewById(R.id.btn_delete);
+
 
             iv_delete = itemView.findViewById(R.id.iv_delete);
             iv_config = itemView.findViewById(R.id.iv_config);
+
+            iv_toTop = itemView.findViewById(R.id.iv_toTop);
+            iv_toBottom = itemView.findViewById(R.id.iv_toBottom);
 
         }
 
@@ -95,6 +98,20 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
                     Log.d("TAG", "iv_delete: "+getAdapterPosition());
                     mDeleteButtonClicked.onItemConfig(getAdapterPosition());
 
+                }
+            });
+
+            iv_toTop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDeleteButtonClicked.getItemPosition("toTop",getAdapterPosition());
+                }
+            });
+
+            iv_toBottom.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDeleteButtonClicked.getItemPosition("toBottom",getAdapterPosition());
                 }
             });
 
@@ -197,6 +214,8 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
         void onItemDismiss(int position);   //删除item用
 
         void onItemConfig(int position);    //配置item用
+
+        void getItemPosition(String oprCode , int position);   //获取操作编码和被点击item的位置
 
     }
 

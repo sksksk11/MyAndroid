@@ -145,6 +145,33 @@ public class SavedBookmarkActivity extends AppCompatActivity {
 
 
             }
+
+            @Override
+            public void getItemPosition(String oprCode, int position) {
+                // oprCode = "toTop" ， 设置item 到列表第一位
+                // oprCode = "toBottom" ，设置item 到列表最后一位
+                List<WebInfo> webInfoList = myBookmarkListAdapter.getWebInfoList();
+
+                //点击toTop按钮时
+                if(oprCode == "toTop"){
+                    Log.d("TAG", "已点击toTop按钮: ");
+                    //把被点击item放到列表第一位
+                    WebInfo webInfo = webInfoList.get(position);
+                    ListTools.changeBookmarkOrder(webInfoList,webInfo,0);
+
+                }else if(oprCode == "toBottom"){
+                    Log.d("TAG", "已点击toBottom按钮: ");
+                    //把被点击item放到列表最后一位
+                    WebInfo webInfo = webInfoList.get(position);
+                    ListTools.changeBookmarkOrder(webInfoList,webInfo,-1);
+
+                }
+                //写入数据库
+//                Log.d("TAG", "排序后: "+webInfoList.toString());
+                updateBookmarkListOrder(webInfoList);
+                recreate();
+
+            }
         });
 
 

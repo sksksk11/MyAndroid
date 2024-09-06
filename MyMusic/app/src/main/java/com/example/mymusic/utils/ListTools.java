@@ -39,9 +39,34 @@ public class ListTools {
 
 
     //将书签移动到第X位，  n：第n位 ，-1：最后一位
+    //传入item，和要放置的序号，N=N位，-1 = 末尾
+    public static void changeBookmarkOrder(List<WebInfo> list,WebInfo webInfo,int newPosition){
+        if( list !=null && webInfo != null && newPosition < list.size() ){
+
+            if (list.indexOf(webInfo)==-1) { return;  }   // 不在列表内
+
+            if (newPosition < -1) {
+                //什么都不做
+                return;
+            }else if(newPosition == -1){
+                //放置到最后一位
+                int lastPosition = list.size()-1 ;
+                list.add(lastPosition,list.remove(list.indexOf(webInfo)));
+            }else if(newPosition >=0){
+                //放置到n位
+                list.add(newPosition,list.remove(list.indexOf(webInfo)));
+
+            }
+
+
+
+            }
+        }
+
+    }
 
 
     //将书签移动到列表最后一位
 
 
-}
+

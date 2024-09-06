@@ -62,10 +62,16 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
 //        Log.d("TAG", "menuView: 9");
         View deleteButton = viewHolder.itemView.findViewById(R.id.iv_delete);
         View btn_config = viewHolder.itemView.findViewById(R.id.iv_config);
+        View btn_toTop = viewHolder.itemView.findViewById(R.id.iv_toTop);
+        View btn_toBottom = viewHolder.itemView.findViewById(R.id.iv_toBottom);
+
+
         if(deleteButton!=null){
             //隐藏删除按钮
             deleteButton.setVisibility(View.GONE);
             btn_config.setVisibility(View.GONE);
+            btn_toTop.setVisibility(View.GONE);
+            btn_toBottom.setVisibility(View.GONE);
         }
     }
 
@@ -76,13 +82,20 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
         if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
             View deleteButton = viewHolder.itemView.findViewById(R.id.iv_delete);
             View configButton = viewHolder.itemView.findViewById(R.id.iv_config);
+            View toTopButton = viewHolder.itemView.findViewById(R.id.iv_toTop);
+            View toBottomButton = viewHolder.itemView.findViewById(R.id.iv_toBottom);
+
             if(deleteButton!=null){
                 //显示删除按钮
                 deleteButton.setVisibility(View.VISIBLE);
                 configButton.setVisibility(View.VISIBLE);
+                toTopButton.setVisibility(View.VISIBLE);
+                toBottomButton.setVisibility(View.VISIBLE);
                 //根据dx的值调整按钮的位置
                 deleteButton.setTranslationX(dX);
                 configButton.setTranslationX(dX);
+                toTopButton.setTranslationX(dX);
+                toBottomButton.setTranslationX(dX);
             }
 
             // 遍历所有可见的 items 并隐藏它们的删除按钮
@@ -92,9 +105,14 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
                 if (viewHolderChild != viewHolder && viewHolderChild.getAdapterPosition() != RecyclerView.NO_POSITION) {
                     View button = child.findViewById(R.id.iv_delete);
                     View btn_config = child.findViewById(R.id.iv_config);
+                    View btn_toTop = child.findViewById(R.id.iv_toTop);
+                    View btn_toBottom = child.findViewById(R.id.iv_toBottom);
+
                     if (button != null) {
                         button.setVisibility(View.GONE);
                         btn_config.setVisibility(View.GONE);
+                        btn_toTop.setVisibility(View.GONE);
+                        btn_toBottom.setVisibility(View.GONE);
                     }
                 }
             }
@@ -108,9 +126,15 @@ public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
                 if (viewHolderChild.getAdapterPosition() != RecyclerView.NO_POSITION) {
                     View button = child.findViewById(R.id.iv_delete);
                     View btn_config = child.findViewById(R.id.iv_config);
+                    View btn_toTop = child.findViewById(R.id.iv_toTop);
+                    View btn_toBottom = child.findViewById(R.id.iv_toBottom);
+
                     if (button != null) {
                         button.setVisibility(View.GONE);
                         btn_config.setVisibility(View.GONE);
+                        btn_toTop.setVisibility(View.GONE);
+                        btn_toBottom.setVisibility(View.GONE);
+
                     }
                 }
             }
