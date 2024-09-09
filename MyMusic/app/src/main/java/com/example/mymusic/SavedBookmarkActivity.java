@@ -13,12 +13,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -114,6 +118,77 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                 WebInfo webInfo = mWebInfoList.get(position);
                 int webinfoId=  webInfo.getId();
 
+                View dialogView = LayoutInflater.from(mContext).inflate(R.layout.config_webinfo_layout,null);
+                Spinner spn_category = dialogView.findViewById(R.id.spn_category);
+
+
+                EditText et_title = dialogView.findViewById(R.id.et_title);
+                et_title.setText(webInfo.getWebTitle());
+
+                //从数据库读取当前所有分类
+                DatabaseHelper databaseHelper = new DatabaseHelper(mContext);
+
+                //加入到列表
+                List<String> items = new ArrayList<>();
+                items.addAll(databaseHelper.getAllCategory());
+
+                //把未分类 放到列表最后
+                items.remove(databaseHelper.CATEGORY_DEFAULT);
+                items.add(databaseHelper.CATEGORY_DEFAULT);
+//                items.add("选项1");
+//                items.add("选项2");
+//                items.add("选项3");
+
+                //创建一个ArrayAdapter来适配数据
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_spinner_item, items);
+
+                //设置下拉列表样式
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+
+                //将Adapter设置给spinner
+                spn_category.setAdapter(adapter);
+//                spn_category.setSelection(0,true);
+                //设置默认选择当前分类
+                int selectPosition = items.indexOf(webInfo.getCategory());
+                if (selectPosition != -1) {
+                    spn_category.setSelection(selectPosition,true);
+                }
+
+                //获取spinner选择结果
+                final String[] selectString = {""};
+                spn_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        selectString[0] = parent.getItemAtPosition(position).toString();
+                        Log.d("TAG", "selectPosition[0]: "+selectString[0]);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        Log.d("TAG", "spinner没有选择任何选项");
+                    }
+                });
+
+                new AlertDialog.Builder(mContext )
+                        .setMessage("修改书签信息")
+                        .setView(dialogView)
+                        .setPositiveButton("保存",(dialog, which) -> {
+                            //保存修改后的书签信息
+                            String newTitle = et_title.getText().toString().trim();
+                            String newCategory = selectString[0];
+                            if (newCategory == null || newCategory == "") { newCategory = webInfo.getCategory(); }
+                            //按id更新数据库
+                            Log.d("TAG", "newTitle: "+newTitle+"，newCategory:"+newCategory);
+                            int updateRows = updateBookmarkTitleById(webinfoId,newTitle,newCategory);
+
+                            recreate();
+                        })
+                        .setNegativeButton("取消",(dialog, which) -> {
+
+                        })
+                        .show();
+
+/*
                 //弹出配置对话框，编辑WebInfo的标题、分类、icon
                 LinearLayout layout = new LinearLayout(mContext);
                 layout.setOrientation(LinearLayout.VERTICAL);
@@ -122,6 +197,9 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                 et_title.setText(webInfo.getWebTitle());
                 et_title.setHint("输入标题");
                 layout.addView(et_title);
+
+                //新增一个下拉框列表
+                initSpinner();
 
                 EditText et_category = new EditText(mContext);
                 et_category.setText(webInfo.getCategory());
@@ -144,10 +222,7 @@ public class SavedBookmarkActivity extends AppCompatActivity {
 
                         })
                         .show();
-
-
-
-
+*/
             }
 
 
@@ -180,6 +255,25 @@ public class SavedBookmarkActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    //在对话框内新增一个下拉框列表
+    private void initSpinner() {
+//        Spinner spinner = new Spinner(mContext);
+//
+//        List<String> items = new ArrayList<>();
+//
+//        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+//        items.addAll(databaseHelper.getAllCategory());
+//
+////        items.add("选项1");
+////        items.add("选项2");
+////        items.add("选项3");
+////        items.add("选项4");
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(mContext,R.id.iv_toTop,items);
+//
+//        spinner.setSelection(0);
 
     }
 
@@ -269,9 +363,10 @@ public class SavedBookmarkActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String newTitle = editText.getText().toString().trim();
                 int webInfoId = mWebInfoList.get(position).getId();
-                Log.d("TAG", "newTitle: "+newTitle+",ID:"+webInfoId);
+                String newCategory = null;   //还未加控件
+                Log.d("TAG", "newTitle: "+newTitle+",ID:"+webInfoId+"，newCategory："+newCategory);
                 //按ID更新数据库中的title
-                int updatedRows = updateBookmarkTitleById(webInfoId,newTitle);
+                int updatedRows = updateBookmarkTitleById(webInfoId,newTitle,newCategory);
 
                 Log.d("TAG", "修改后保存,更新数据条目："+updatedRows);
                 recreate(); //重新加载页面
@@ -295,9 +390,9 @@ public class SavedBookmarkActivity extends AppCompatActivity {
         return updateRows;
     }
 
-    private int updateBookmarkTitleById(int webInfoId, String newTitle) {
+    private int updateBookmarkTitleById(int webInfoId, String newTitle,String newCategory) {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
-        int updatedRows = databaseHelper.updataTitleById(webInfoId,newTitle);
+        int updatedRows = databaseHelper.updataTitleById(webInfoId,newTitle,newCategory);
         return updatedRows;
     }
 
@@ -311,10 +406,11 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                 @SuppressLint("Range") String url = cursor.getString(cursor.getColumnIndex(databaseHelper.COLUMN_WEBURL));
                 @SuppressLint("Range") int icon = cursor.getInt(cursor.getColumnIndex(databaseHelper.COLUMN_ICON));
                 @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(databaseHelper.COLUMN_ID));
+                @SuppressLint("Range") String category = cursor.getString(cursor.getColumnIndex(databaseHelper.COLUMN_CATEGORY));
 //                @SuppressLint("Range") int Num = cursor.getInt(cursor.getColumnIndex(databaseHelper.COLUMN_NUMBER));
-                Log.d("TAG", "id: "+id +" , title: "+title +" ,url:"+url+" ,icon:"+icon);
+                Log.d("TAG", "id: "+id +" , title: "+title +" ,url:"+url+" ,icon:"+icon+" ,category:"+category);
 
-                WebInfo webInfo = new WebInfo(url,title,icon,id);
+                WebInfo webInfo = new WebInfo(url,title,icon,id,category);
                 mWebInfoList.add(webInfo);
                 //同时复制一份到初始列表里
                 initialList.add(webInfo);

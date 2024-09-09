@@ -22,6 +22,15 @@ public class WebInfo implements Serializable {
         this.id  = id;
     }
 
+    public WebInfo(String webUrl, String webTitle, int icon,int id,String category) {
+        this.icon = icon;
+        this.webUrl = webUrl;
+        this.webTitle = webTitle;
+        this.id  = id;
+        this.category = category;
+    }
+
+
     public String isIs_del() {     return is_del;   }
     public void setIs_del(String is_del) {      this.is_del = is_del;   }
 

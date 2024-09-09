@@ -12,6 +12,13 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
         <!-- Customize your theme here. -->
+
+        <!-- 确保主题不受夜间模式影响 -->
+        <item name="isLightTheme">true</item>
+        <!-- 去除深色模式相关的设置 -->
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+
     </style>
 
     <style name="Theme.fullScreen" parent="Theme.MyMusic">

@@ -1,5 +1,6 @@
 package com.example.mymusic.utils;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import androidx.annotation.Nullable;
 import com.example.mymusic.R;
 import com.example.mymusic.data.WebInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -28,6 +30,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CATEGORY = "category";
     public static final String COLUMN_ICON = "icon";
     public static final String COLUMN_ISDEL = "isdel";
+
+    public static final String CATEGORY_DEFAULT = "未分类";
 
     private Context mContext;
 
@@ -88,6 +92,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_NUMBER,number);
             values.put(COLUMN_ICON,R.drawable.bm_default);
             values.put(COLUMN_ISDEL,"N");
+            values.put(COLUMN_CATEGORY,CATEGORY_DEFAULT);
+//            values.put(COLUMN_CATEGORY,"分类55");
             db.insert(TABLE_NAME_WEBURLS,null,values);
             db.close();
         }
@@ -151,12 +157,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //按ID更新标题,返回更新数据量
-    public int updataTitleById(int id ,String newTitle){
+    public int updataTitleById(int id ,String newTitle,String newCategory){
 
         String stringId = id+"";
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_WEBTITLE,newTitle);
+        if (newCategory == null) {
+            values.put(COLUMN_CATEGORY,CATEGORY_DEFAULT);
+        }else{
+            values.put(COLUMN_CATEGORY,newCategory);
+        }
+
         int updatedRows = db.update(TABLE_NAME_WEBURLS,values,COLUMN_ID+" = ?",new String[]{stringId});
         return updatedRows;
 
@@ -195,12 +207,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return updateRows;
     }
 
-    //传入列表，更新条目的顺序
-    public void updateAllBookmarkOrder(List<WebInfo> bookmarkList){
 
+    //读取数据库，获取当前所有分类,加入到列表
+    public List<String> getAllCategory(){
+        List<String> categoryList = new ArrayList<>();
 
+        SQLiteDatabase db = getReadableDatabase();
+        //按分类数量倒序
+//        String QuerySql = "select distinct " + COLUMN_CATEGORY + " from "+TABLE_NAME_WEBURLS + " where " + COLUMN_ISDEL + " = 'N' ORDER BY " + COLUMN_CATEGORY;
+        String QuerySql = "SELECT " + COLUMN_CATEGORY + " ,  COUNT(*) AS COUNT FROM "+TABLE_NAME_WEBURLS + " WHERE " + COLUMN_ISDEL + " = 'N' GROUP BY " + COLUMN_CATEGORY +" ORDER BY COUNT DESC ";
+        Log.d("TAG", "QuerySql: "+QuerySql);
+        Cursor cursor = db.rawQuery(QuerySql, null);
+
+        if(cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") String category = cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY));
+                Log.d("TAG", "category: " + category);
+                if (category!=null) {
+                    categoryList.add(category);
+                }
+
+            } while (cursor.moveToNext());
+
+        }
+        cursor.close();
+        if (categoryList == null) {
+            categoryList.add(CATEGORY_DEFAULT);
+        }
+
+        return categoryList;
     }
-
 
 
 }
