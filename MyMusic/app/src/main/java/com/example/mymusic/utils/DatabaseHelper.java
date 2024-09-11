@@ -221,8 +221,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getReadableDatabase();
         //按分类数量倒序
-//        String QuerySql = "select distinct " + COLUMN_CATEGORY + " from "+TABLE_NAME_WEBURLS + " where " + COLUMN_ISDEL + " = 'N' ORDER BY " + COLUMN_CATEGORY;
-        String QuerySql = "SELECT " + COLUMN_CATEGORY + " ,  COUNT(*) AS COUNT FROM "+TABLE_NAME_WEBURLS + " WHERE " + COLUMN_ISDEL + " = 'N' GROUP BY " + COLUMN_CATEGORY +" ORDER BY COUNT DESC ";
+//        String QuerySql = "SELECT " + COLUMN_CATEGORY + " ,  COUNT(*) AS COUNT FROM "+TABLE_NAME_WEBURLS + " WHERE " + COLUMN_ISDEL + " = 'N' GROUP BY " + COLUMN_CATEGORY +" ORDER BY COUNT DESC ";
+        String QuerySql = "SELECT " + COLUMN_CATEGORY + " ,  COUNT(*) AS COUNT FROM "+TABLE_NAME_WEBURLS + " GROUP BY " + COLUMN_CATEGORY +" ORDER BY COUNT DESC ";
         Log.d("TAG", "QuerySql: "+QuerySql);
         Cursor cursor = db.rawQuery(QuerySql, null);
 
@@ -230,8 +230,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
                 @SuppressLint("Range") String category = cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY));
                 Log.d("TAG", "category: " + category);
-                if (category!=null) {
-                    categoryList.add(category);
+                if (category!=null&& !category.trim().isEmpty()) {
+                    categoryList.add(category.trim());
                 }
 
             } while (cursor.moveToNext());

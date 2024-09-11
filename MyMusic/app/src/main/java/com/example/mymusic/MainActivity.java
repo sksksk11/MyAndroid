@@ -114,4 +114,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        btn_frame.setVisibility(View.GONE);
+    }
 }

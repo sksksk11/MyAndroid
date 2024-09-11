@@ -26,12 +26,14 @@
             />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/ll_spinnerContainer"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
 
         >
         <TextView
+            android:id="@+id/tv_categoryLabel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -44,6 +46,39 @@
             android:layout_height="match_parent"
             android:layout_weight="5"
             android:gravity="center_vertical"
+            />
+        <ImageView
+            android:id="@+id/iv_addNewCategory"
+            android:layout_width="26dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/plus_circle"
+            android:scaleType="fitCenter"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_edittextContainer"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        >
+
+        <EditText
+            android:id="@+id/et_newCategory"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:gravity="center_vertical"
+            android:hint="输入新分类"
+
+            />
+        <ImageView
+            android:id="@+id/iv_turnToSpinner"
+            android:layout_width="26dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/minus_circle"
+            android:scaleType="fitCenter"
+
             />
     </LinearLayout>
     <LinearLayout
