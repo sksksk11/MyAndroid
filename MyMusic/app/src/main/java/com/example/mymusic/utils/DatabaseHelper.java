@@ -156,8 +156,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    //按ID更新标题,返回更新数据量
-    public int updataTitleById(int id ,String newTitle,String newCategory){
+    //按ID更新标题,返回更新数据量,newIconid 传入0 使用默认图标
+    public int updataTitleById(int id ,String newTitle,String newCategory,int newIconid){
 
         String stringId = id+"";
         SQLiteDatabase db = getWritableDatabase();
@@ -168,6 +168,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }else{
             values.put(COLUMN_CATEGORY,newCategory);
         }
+
+        //newIconid 传入0时， 使用默认图标
+        if (newIconid == 0) {
+            newIconid = R.drawable.bm_default;
+        }
+
+        values.put(COLUMN_ICON,newIconid);
 
         int updatedRows = db.update(TABLE_NAME_WEBURLS,values,COLUMN_ID+" = ?",new String[]{stringId});
         return updatedRows;

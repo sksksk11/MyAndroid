@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mymusic.adapter.MyBookmarkListAdapter;
+import com.example.mymusic.adapter.MyIconsAdapter;
 import com.example.mymusic.data.WebInfo;
 import com.example.mymusic.utils.DatabaseHelper;
 import com.example.mymusic.utils.ListTools;
@@ -49,6 +51,9 @@ public class SavedBookmarkActivity extends AppCompatActivity {
     private ImageView iv_searchImage,iv_clearSearchText;
 
     private Context mContext;
+
+    private MyIconsAdapter mMyIconsAdapter;
+    private int[] iconIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +130,39 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                 EditText et_title = dialogView.findViewById(R.id.et_title);
                 et_title.setText(webInfo.getWebTitle());
 
+                ImageView iv_icon = dialogView.findViewById(R.id.iv_icon);
+                final int[] newIconid = {webInfo.getIcon()};
+                iv_icon.setImageResource(newIconid[0]);
+
+                //icon图片列表
+                GridView gv_iconImgs = dialogView.findViewById(R.id.gv_iconImgs);
+                iconIds = new int[]{
+                        R.drawable.logo_asana,
+                        R.drawable.logo_confluence,
+                        R.drawable.logo_coub,
+                        R.drawable.logo_creativemarket,
+                        R.drawable.logo_dailymotion,
+                        R.drawable.logo_digg,
+                        R.drawable.logo_framer,
+                        R.drawable.logo_github,
+                        R.drawable.logo_iconjar,
+                        R.drawable.logo_intercom,
+                        R.drawable.logo_iodgo_iscord,
+                        R.drawable.logo_kickstarter,
+                        R.drawable.logo_quora,
+                        R.drawable.logo_rss,
+                        R.drawable.logo_snapchat,
+                        R.drawable.logo_spotify,
+                        R.drawable.logo_strava,
+                        R.drawable.logo_treehouse,
+                        R.drawable.logo_ubuntu,
+                        R.drawable.logo_whatsapp,
+                        R.drawable.bm_default
+                };
+                mMyIconsAdapter = new MyIconsAdapter(mContext,iconIds);
+                gv_iconImgs.setAdapter(mMyIconsAdapter);
+
+
                 //从数据库读取当前所有分类
                 DatabaseHelper databaseHelper = new DatabaseHelper(mContext);
 
@@ -135,9 +173,6 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                 //把未分类 放到列表最后
                 items.remove(databaseHelper.CATEGORY_DEFAULT);
                 items.add(databaseHelper.CATEGORY_DEFAULT);
-//                items.add("选项1");
-//                items.add("选项2");
-//                items.add("选项3");
 
                 //创建一个ArrayAdapter来适配数据
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_spinner_item, items);
@@ -169,17 +204,32 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                     }
                 });
 
+
+                //获取icon列表选择结果
+                gv_iconImgs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Log.d("TAG", "ICON点击: "+position);
+
+                        //设置图片背景？ 还是替换 imageview 图片？
+                        newIconid[0] = iconIds[position];
+                        iv_icon.setImageResource(newIconid[0]);
+                    }
+                });
+
+
                 new AlertDialog.Builder(mContext )
                         .setMessage("修改书签信息")
                         .setView(dialogView)
                         .setPositiveButton("保存",(dialog, which) -> {
                             //保存修改后的书签信息
                             String newTitle = et_title.getText().toString().trim();
-                            String newCategory = selectString[0];
+                            String newCategory = selectString[0].toString().trim();
                             if (newCategory == null || newCategory == "") { newCategory = webInfo.getCategory(); }
+
                             //按id更新数据库
                             Log.d("TAG", "newTitle: "+newTitle+"，newCategory:"+newCategory);
-                            int updateRows = updateBookmarkTitleById(webinfoId,newTitle,newCategory);
+                            int updateRows = updateBookmarkTitleById(webinfoId,newTitle,newCategory,newIconid[0]);
 
                             recreate();
                         })
@@ -188,41 +238,6 @@ public class SavedBookmarkActivity extends AppCompatActivity {
                         })
                         .show();
 
-/*
-                //弹出配置对话框，编辑WebInfo的标题、分类、icon
-                LinearLayout layout = new LinearLayout(mContext);
-                layout.setOrientation(LinearLayout.VERTICAL);
-
-                EditText et_title = new EditText(mContext);
-                et_title.setText(webInfo.getWebTitle());
-                et_title.setHint("输入标题");
-                layout.addView(et_title);
-
-                //新增一个下拉框列表
-                initSpinner();
-
-                EditText et_category = new EditText(mContext);
-                et_category.setText(webInfo.getCategory());
-                et_category.setHint("输入类别");
-                layout.addView(et_category);
-
-                new AlertDialog.Builder(mContext )
-                        .setMessage("修改书签信息")
-                        .setView(layout)
-                        .setPositiveButton("保存",(dialog, which) -> {
-                            //保存修改后的书签信息
-                            String newTitle = et_title.getText().toString().trim();
-                            String newCategory = et_category.getText().toString().trim();
-                            //按id更新数据库
-                            int updateRows = updateBookmarkTitleById(webinfoId,newTitle);
-
-                            recreate();
-                        })
-                        .setNegativeButton("取消",(dialog, which) -> {
-
-                        })
-                        .show();
-*/
             }
 
 
@@ -255,27 +270,8 @@ public class SavedBookmarkActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
-    //在对话框内新增一个下拉框列表
-    private void initSpinner() {
-//        Spinner spinner = new Spinner(mContext);
-//
-//        List<String> items = new ArrayList<>();
-//
-//        DatabaseHelper databaseHelper = new DatabaseHelper(this);
-//        items.addAll(databaseHelper.getAllCategory());
-//
-////        items.add("选项1");
-////        items.add("选项2");
-////        items.add("选项3");
-////        items.add("选项4");
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(mContext,R.id.iv_toTop,items);
-//
-//        spinner.setSelection(0);
-
-    }
 
     private void searchMarkbook() {
         iv_searchImage.setOnClickListener(new View.OnClickListener() {
@@ -331,49 +327,49 @@ public class SavedBookmarkActivity extends AppCompatActivity {
 
     }
 
-    private void showEditDialog(int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("编辑书签");
-
-        EditText editText = new EditText(this);
-        editText.setText(mWebInfoList.get(position).getWebTitle());
-        builder.setView(editText);
-
-        builder.setNegativeButton("取消",null);
-
-        builder.setNeutralButton("删除", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //选择删除按钮,按ID删除当前条目，更新所有书签排列序号
-
-                Log.d("TAG", "删除前列表: "+ Arrays.toString(mWebInfoList.toArray()) );//打印列表供测试
-
-                int webInfoId = mWebInfoList.get(position).getId();
-                int deletedRows = deleteBookmarkById(webInfoId);
-                Log.d("TAG", "deletedRows: "+deletedRows);
-                mWebInfoList.remove(position);
-                updateBookmarkListOrder(mWebInfoList);
-                Log.d("TAG", "删除后的列表: "+ Arrays.toString(mWebInfoList.toArray()) );//打印列表供测试
-                recreate(); //重新加载页面
-            }
-        });
-
-        builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String newTitle = editText.getText().toString().trim();
-                int webInfoId = mWebInfoList.get(position).getId();
-                String newCategory = null;   //还未加控件
-                Log.d("TAG", "newTitle: "+newTitle+",ID:"+webInfoId+"，newCategory："+newCategory);
-                //按ID更新数据库中的title
-                int updatedRows = updateBookmarkTitleById(webInfoId,newTitle,newCategory);
-
-                Log.d("TAG", "修改后保存,更新数据条目："+updatedRows);
-                recreate(); //重新加载页面
-            }
-        });
-        builder.show();
-    }
+//    private void showEditDialog(int position) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("编辑书签");
+//
+//        EditText editText = new EditText(this);
+//        editText.setText(mWebInfoList.get(position).getWebTitle());
+//        builder.setView(editText);
+//
+//        builder.setNegativeButton("取消",null);
+//
+//        builder.setNeutralButton("删除", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                //选择删除按钮,按ID删除当前条目，更新所有书签排列序号
+//
+//                Log.d("TAG", "删除前列表: "+ Arrays.toString(mWebInfoList.toArray()) );//打印列表供测试
+//
+//                int webInfoId = mWebInfoList.get(position).getId();
+//                int deletedRows = deleteBookmarkById(webInfoId);
+//                Log.d("TAG", "deletedRows: "+deletedRows);
+//                mWebInfoList.remove(position);
+//                updateBookmarkListOrder(mWebInfoList);
+//                Log.d("TAG", "删除后的列表: "+ Arrays.toString(mWebInfoList.toArray()) );//打印列表供测试
+//                recreate(); //重新加载页面
+//            }
+//        });
+//
+//        builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                String newTitle = editText.getText().toString().trim();
+//                int webInfoId = mWebInfoList.get(position).getId();
+//                String newCategory = null;   //还未加控件
+//                Log.d("TAG", "newTitle: "+newTitle+",ID:"+webInfoId+"，newCategory："+newCategory);
+//                //按ID更新数据库中的title
+//                int updatedRows = updateBookmarkTitleById(webInfoId,newTitle,newCategory);
+//
+//                Log.d("TAG", "修改后保存,更新数据条目："+updatedRows);
+//                recreate(); //重新加载页面
+//            }
+//        });
+//        builder.show();
+//    }
 
 
     private int deleteBookmarkById(int webInfoId) {
@@ -390,9 +386,9 @@ public class SavedBookmarkActivity extends AppCompatActivity {
         return updateRows;
     }
 
-    private int updateBookmarkTitleById(int webInfoId, String newTitle,String newCategory) {
+    private int updateBookmarkTitleById(int webInfoId, String newTitle,String newCategory ,int newIconid) {
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
-        int updatedRows = databaseHelper.updataTitleById(webInfoId,newTitle,newCategory);
+        int updatedRows = databaseHelper.updataTitleById(webInfoId,newTitle,newCategory,newIconid);
         return updatedRows;
     }
 

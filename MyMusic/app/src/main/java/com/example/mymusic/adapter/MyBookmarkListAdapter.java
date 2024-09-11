@@ -74,14 +74,7 @@ public class MyBookmarkListAdapter extends RecyclerView.Adapter<MyBookmarkListAd
 //            iv_icon.setImageResource(R.id.);
             et_pageTitle.setText(webInfo.getWebTitle());
             et_pageUrl.setText(webInfo.getWebUrl());
-            //删除按钮,替换为图片删除按钮
-//            btn_delete.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Log.d("TAG", "delete: "+getAdapterPosition());
-//                    mDeleteButtonClicked.onItemDismiss(getAdapterPosition());
-//                }
-//            });
+            iv_icon.setImageResource(webInfo.getIcon());
 
             iv_delete.setOnClickListener(new View.OnClickListener() {
                 @Override

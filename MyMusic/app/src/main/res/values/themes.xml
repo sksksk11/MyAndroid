@@ -9,6 +9,10 @@
         <item name="colorSecondary">@color/colorPrimary</item>
         <item name="colorSecondaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorOnSecondary">@color/white</item>
+
+        <item name="android:textColorPrimary">#000000</item>  <!-- 设置主要文本颜色为黑色 -->
+        <item name="android:textColorSecondary">@color/green_200</item>  <!-- 设置次要文本颜色 -->
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
         <!-- Customize your theme here. -->
