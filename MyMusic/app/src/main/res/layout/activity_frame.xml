@@ -7,12 +7,12 @@
     tools:context=".FrameActivity"
     android:orientation="vertical"
     >
+
     <WebView
         android:id="@+id/wv_mainWebpage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        />
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
             android:layout_gravity="center_vertical"
             android:text="GO"
             android:maxLines="1"
-            android:textSize="10sp"
+            android:textSize="16dp"
             android:layout_marginRight="@dimen/lpadding"
             android:onClick="openWebUrl"
             />
@@ -45,44 +45,175 @@
     </LinearLayout>
 
 
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:gravity="center"-->
+<!--        >-->
+
+<!--        <Button-->
+<!--            android:id="@+id/btn_collect"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:drawableLeft="@drawable/configured"-->
+<!--            android:drawablePadding="2dp"-->
+<!--            android:text="收藏"-->
+<!--            android:layout_marginLeft="@dimen/lpadding"-->
+<!--            android:onClick="addWeburl"-->
+<!--            />-->
+<!--        <Button-->
+<!--            android:id="@+id/btn_bookmark"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="书签"-->
+<!--            android:layout_marginLeft="6dp"-->
+<!--            android:onClick="browseSavedBookmark"-->
+<!--            />-->
+<!--        <Button-->
+<!--            android:id="@+id/btn_clear"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="清空"-->
+<!--            android:layout_marginLeft="6dp"-->
+<!--            android:layout_marginRight="@dimen/lpadding"-->
+<!--            android:onClick="clearWebUrl" />-->
+
+
+<!--            />-->
+
+<!--    </LinearLayout>-->
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="3dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/rounded_background"
         >
-
-        <Button
-            android:id="@+id/btn_collect"
+        <LinearLayout
+            android:id="@+id/ll_collectContainer"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/LinearLayout_height"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
             android:layout_weight="1"
-            android:text="收藏"
-            android:layout_marginLeft="@dimen/lpadding"
-            android:onClick="addWeburl"
-            />
-        <Button
-            android:id="@+id/btn_bookmark"
+            >
+            <ImageView
+                android:layout_width="@dimen/img_width"
+                android:layout_height="@dimen/img_height"
+                android:layout_marginTop="@dimen/img_marginTop"
+                android:src="@drawable/configured"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_marginTop"
+                android:text="收藏"
+                android:textColor="@color/white"
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_clearContainer"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/LinearLayout_height"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
             android:layout_weight="1"
-            android:text="书签"
-            android:layout_marginLeft="6dp"
-            android:onClick="browseSavedBookmark"
-            />
-        <Button
-            android:id="@+id/btn_clear"
+            >
+            <ImageView
+                android:layout_width="@dimen/img_width"
+                android:layout_height="@dimen/img_height"
+                android:layout_marginTop="@dimen/img_marginTop"
+                android:src="@drawable/configured"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_marginTop"
+                android:text="清空"
+                android:textColor="@color/white"
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_bookmarkContainer"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/LinearLayout_height"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
             android:layout_weight="1"
-            android:text="清空"
-            android:layout_marginLeft="6dp"
-            android:layout_marginRight="@dimen/lpadding"
-            android:onClick="clearWebUrl" />
+            >
 
+            <ImageView
+                android:layout_width="@dimen/img_width"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/img_marginTop"
+                android:src="@drawable/configured" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_marginTop"
+                android:text="书签"
+                android:textColor="@color/white"
+                />
 
-            />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_historyContainer"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/LinearLayout_height"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+            >
+            <ImageView
+                android:layout_width="@dimen/img_width"
+                android:layout_height="@dimen/img_height"
+                android:layout_marginTop="@dimen/img_marginTop"
+                android:src="@drawable/configured"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_marginTop"
+                android:text="历史"
+                android:textColor="@color/white"
+                />
 
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_keywordContainer"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/LinearLayout_height"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+            >
+            <ImageView
+                android:layout_width="@dimen/img_width"
+                android:layout_height="@dimen/img_height"
+                android:layout_marginTop="@dimen/img_marginTop"
+                android:src="@drawable/configured"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_marginTop"
+                android:text="关键词"
+                android:textColor="@color/white"
+                />
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

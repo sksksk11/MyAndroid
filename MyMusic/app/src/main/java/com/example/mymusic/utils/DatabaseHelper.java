@@ -22,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "my_database.db";
     public static final int DATABASE_VERSION = 1;
     public static final int DATABASE_NEW_VERSION = 2;
-    public static final String TABLE_NAME_WEBURLS ="weburls";
+    public static final String TABLE_NAME_WEBURLS ="weburls";    //书签表
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_WEBURL = "weburl";
     public static final String COLUMN_WEBTITLE = "webtitle";
@@ -32,6 +32,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ISDEL = "isdel";
 
     public static final String CATEGORY_DEFAULT = "未分类";
+
+    public static final String TABLE_NAME_HISTORY ="browsehistory";    //浏览历史表
 
     private Context mContext;
 
@@ -65,6 +67,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        String createTableQuery = "CREATE TABLE " + TABLE_NAME_HISTORY + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_WEBURL + " TEXT,"
+                + COLUMN_WEBTITLE + " TEXT"
+                + ")";
+        db.execSQL(createTableQuery);
 
     }
 

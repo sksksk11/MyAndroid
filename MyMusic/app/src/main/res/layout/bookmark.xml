@@ -35,7 +35,7 @@
             android:background="@null"
             android:maxLines="1"
             android:ellipsize="end"
-            android:textColor="@color/black"
+            android:textColor="@color/colorPrimary"
             />
         <TextView
             android:id="@+id/et_pageUrl"

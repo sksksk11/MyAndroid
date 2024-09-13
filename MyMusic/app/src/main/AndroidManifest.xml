@@ -16,7 +16,8 @@
 
         <activity
             android:name=".SavedBookmarkActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.noDarkModem"/>
         <activity
             android:name=".FrameActivity"
             android:exported="true"

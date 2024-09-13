@@ -21,6 +21,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.mymusic.data.WebInfo;
@@ -37,6 +38,7 @@ public class FrameActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 100 ;   //选择书签返回参数
     private ActivityResultLauncher<Intent> activityResultLauncher ;
     private Context mContext;
+    private LinearLayout ll_collectContainer,ll_clearContainer,ll_bookmarkContainer,ll_historyContainer,ll_keywordContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +89,14 @@ public class FrameActivity extends AppCompatActivity {
     private void initView() {
         tv_url = findViewById(R.id.et_url);
         wv_mainWebpage = findViewById(R.id.wv_mainWebpage);
-        btn_collect = findViewById(R.id.btn_collect);
+//        btn_collect = findViewById(R.id.btn_collect);    //原收藏按钮，已删除
+
+        ll_collectContainer = findViewById(R.id.ll_collectContainer);
+        ll_clearContainer = findViewById(R.id.ll_clearContainer);
+        ll_bookmarkContainer = findViewById(R.id.ll_bookmarkContainer);
+        ll_historyContainer = findViewById(R.id.ll_historyContainer);
+        ll_keywordContainer = findViewById(R.id.ll_keywordContainer);
+
         mContext = this;
 
         String urlString = "http://www.163.com";
@@ -150,6 +159,37 @@ public class FrameActivity extends AppCompatActivity {
 
                     }
                 });
+
+
+
+        //设置按钮点击事件
+        //收藏按钮
+        ll_collectContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!tv_url.getText().toString().isEmpty()) {
+                    addWeburl(v);
+                }
+            }
+        });
+
+        //打开书签按钮
+        ll_bookmarkContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                browseSavedBookmark(v);
+            }
+        });
+
+        //清空地址栏按钮
+        ll_clearContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                tv_url.setText("");
+                tv_url.requestFocus();
+            }
+        });
 
     }
 

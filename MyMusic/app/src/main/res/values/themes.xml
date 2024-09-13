@@ -1,4 +1,5 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:targetApi="q">
     <!-- Base application theme. -->
     <style name="Theme.MyMusic" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
@@ -30,6 +31,19 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
+
+    </style>
+
+    <style name="Theme.noDarkModem" parent="Theme.MyMusic">
+
+        <item name="windowNoTitle">true</item>
+<!--        <item name="windowActionBar">false</item>-->
+<!--        <item name="android:windowFullscreen">true</item>-->
+        <!-- 确保主题不受夜间模式影响 -->
+        <item name="isLightTheme">true</item>
+        <!-- 去除深色模式相关的设置 -->
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:windowIsTranslucent">false</item>
 
     </style>
 
