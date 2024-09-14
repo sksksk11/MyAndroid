@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,11 +47,15 @@ public class FrameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_frame);
 
         initView();
+
         initDataBase();
+
         //获取返回值
         initGetResult();
 
     }
+
+
 
     private void initGetResult() {
         activityResultLauncher = registerForActivityResult(
@@ -84,6 +89,40 @@ public class FrameActivity extends AppCompatActivity {
     private void initDataBase() {
         //初始化数据库
         mDatabaseHelper = new DatabaseHelper(this);
+
+        //判断数据库是否需要升级
+        upgradeDatabase();
+    }
+
+    private void upgradeDatabase() {
+
+        if (mDatabaseHelper != null) {
+            SQLiteDatabase database = mDatabaseHelper.getReadableDatabase();
+            int oldVersion = database.getVersion();
+            Log.d("TAG", "oldVersion: "+oldVersion);
+            int targetVersion  = mDatabaseHelper.DATABASE_NEW_VERSION;
+
+            if(oldVersion<targetVersion ){
+                database.beginTransaction();
+                try {
+                    mDatabaseHelper.onUpgrade(database,oldVersion,targetVersion);
+                    database.setTransactionSuccessful();
+
+                }catch (Exception e){
+                 e.printStackTrace();
+                }
+                finally {
+                    database.endTransaction();
+                }
+//                database.setVersion(targetVersion);
+
+            }
+
+            database.close();
+
+
+        }
+
     }
 
     private void initView() {

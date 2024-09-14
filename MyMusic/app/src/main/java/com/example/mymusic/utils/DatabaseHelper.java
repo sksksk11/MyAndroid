@@ -34,6 +34,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String CATEGORY_DEFAULT = "未分类";
 
     public static final String TABLE_NAME_HISTORY ="browsehistory";    //浏览历史表
+    public static final String COLUMN_ICONURL = "iconurl";
+
+    public static final String TABLE_NAME_KEYWORD ="keyword";    //关键词表
+    public static final String COLUMN_KEYWORD = "keyword";
+    public static final String COLUMN_CLICKTIMES = "clicktimes";
+
+
 
     private Context mContext;
 
@@ -63,17 +70,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + ")";
         db.execSQL(createTableQuery);
 
+        String createHistoryTableQuery = "CREATE TABLE " + TABLE_NAME_HISTORY + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_WEBURL + " TEXT,"
+                + COLUMN_WEBTITLE + " TEXT,"
+                + COLUMN_ICONURL + " TEXT"     //网页 favicon.icon 图标地址
+                + ")";
+        db.execSQL(createHistoryTableQuery);
+
+        String createKeywordTableQuery = "CREATE TABLE " + TABLE_NAME_KEYWORD + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_KEYWORD + " TEXT,"
+                + COLUMN_CLICKTIMES + " TEXT,"
+                + COLUMN_ICON + " TEXT"     // 关键词 图标地址
+                + ")";
+        db.execSQL(createKeywordTableQuery);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        String createTableQuery = "CREATE TABLE " + TABLE_NAME_HISTORY + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_WEBURL + " TEXT,"
-                + COLUMN_WEBTITLE + " TEXT"
-                + ")";
-        db.execSQL(createTableQuery);
+        if(oldVersion<2) {
+            String createHistoryTableQuery = "CREATE TABLE " + TABLE_NAME_HISTORY + "("
+                    + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + COLUMN_WEBURL + " TEXT,"
+                    + COLUMN_WEBTITLE + " TEXT,"
+                    + COLUMN_ICON + " TEXT"     //网页 favicon.icon 图标地址
+                    + ")";
+            db.execSQL(createHistoryTableQuery);
+
+
+            String createKeywordTableQuery = "CREATE TABLE " + TABLE_NAME_KEYWORD + "("
+                    + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + COLUMN_KEYWORD + " TEXT,"
+                    + COLUMN_CLICKTIMES + " TEXT,"
+                    + COLUMN_ICON + " TEXT"     // 关键词 图标地址
+                    + ")";
+            db.execSQL(createKeywordTableQuery);
+
+
+        }
 
     }
 
