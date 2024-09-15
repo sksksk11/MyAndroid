@@ -13,11 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMusic"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".HistoryActivity"
+            android:exported="true" />
         <activity
             android:name=".SavedBookmarkActivity"
             android:exported="true"
-            android:theme="@style/Theme.noDarkModem"/>
+            android:theme="@style/Theme.noDarkModem" />
         <activity
             android:name=".FrameActivity"
             android:exported="true"

@@ -37,7 +37,7 @@ public class FrameActivity extends AppCompatActivity {
     private String loadedUrl ,webTitle ;  //存储页面加载后的网页url和标题
     private DatabaseHelper mDatabaseHelper;
     private static final int REQUEST_CODE = 100 ;   //选择书签返回参数
-    private ActivityResultLauncher<Intent> activityResultLauncher ;
+    private ActivityResultLauncher<Intent> activityResultLauncher ,activityResultHistory;
     private Context mContext;
     private LinearLayout ll_collectContainer,ll_clearContainer,ll_bookmarkContainer,ll_historyContainer,ll_keywordContainer;
 
@@ -180,6 +180,10 @@ public class FrameActivity extends AppCompatActivity {
                 loadedUrl = view.getUrl();  //页面加载完成后，获取页面url
                 tv_url.setText(loadedUrl);
                 webTitle = view.getTitle();
+
+                //将地址和标题存入历史记录表
+                mDatabaseHelper.saveToHistory(loadedUrl,webTitle,null);
+
             }
         });
 
@@ -227,6 +231,15 @@ public class FrameActivity extends AppCompatActivity {
 
                 tv_url.setText("");
                 tv_url.requestFocus();
+            }
+        });
+
+        //历史记录按钮
+        ll_historyContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext,HistoryActivity.class);
+                startActivity(intent);   //待改为取得返回参数的
             }
         });
 

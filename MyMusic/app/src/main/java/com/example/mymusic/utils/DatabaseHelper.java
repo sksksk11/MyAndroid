@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.example.mymusic.R;
+import com.example.mymusic.data.WebHistory;
 import com.example.mymusic.data.WebInfo;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "my_database.db";
     public static final int DATABASE_VERSION = 1;
     public static final int DATABASE_NEW_VERSION = 2;
-    public static final String TABLE_NAME_WEBURLS ="weburls";    //书签表
+    public static final String TABLE_NAME_WEBURLS = "weburls";    //书签表
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_WEBURL = "weburl";
     public static final String COLUMN_WEBTITLE = "webtitle";
@@ -33,13 +34,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String CATEGORY_DEFAULT = "未分类";
 
-    public static final String TABLE_NAME_HISTORY ="browsehistory";    //浏览历史表
+    public static final String TABLE_NAME_HISTORY = "browsehistory";    //浏览历史表
     public static final String COLUMN_ICONURL = "iconurl";
+    public static final String COLUMN_VISITTIME = "visittime";
+    public static final int MAX_HISTORY_NUM = 300;   //最大保存历史浏览记录数
 
-    public static final String TABLE_NAME_KEYWORD ="keyword";    //关键词表
+
+    public static final String TABLE_NAME_KEYWORD = "keyword";    //关键词表
     public static final String COLUMN_KEYWORD = "keyword";
     public static final String COLUMN_CLICKTIMES = "clicktimes";
-
 
 
     private Context mContext;
@@ -49,11 +52,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         mContext = context;
     }
 
-    public DatabaseHelper(Context context){
+    public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         mContext = context;
     }
-
 
 
     @Override
@@ -74,7 +76,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_WEBURL + " TEXT,"
                 + COLUMN_WEBTITLE + " TEXT,"
-                + COLUMN_ICONURL + " TEXT"     //网页 favicon.icon 图标地址
+                + COLUMN_ICON + " TEXT,"     //网页 favicon.icon 图标地址
+                + COLUMN_VISITTIME + " TEXT"     //访问时间
                 + ")";
         db.execSQL(createHistoryTableQuery);
 
@@ -91,12 +94,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        if(oldVersion<2) {
+        if (oldVersion < 2) {
             String createHistoryTableQuery = "CREATE TABLE " + TABLE_NAME_HISTORY + "("
                     + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + COLUMN_WEBURL + " TEXT,"
                     + COLUMN_WEBTITLE + " TEXT,"
-                    + COLUMN_ICON + " TEXT"     //网页 favicon.icon 图标地址
+                    + COLUMN_ICON + " TEXT,"     //网页 favicon.icon 图标地址
+                    + COLUMN_VISITTIME + " TEXT"     //访问时间
                     + ")";
             db.execSQL(createHistoryTableQuery);
 
@@ -109,38 +113,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + ")";
             db.execSQL(createKeywordTableQuery);
 
+            //修改表结构
+//            String addColumnQuery = "ALTER TABLE "+ TABLE_NAME_HISTORY +" ADD COLUMN " + COLUMN_VISITTIME + " TEXT";
+//            db.execSQL(addColumnQuery);
 
         }
 
     }
 
     //按照网页信息对象插入一条网页信息
-    public void insertOneWebUrl(WebInfo webInfo){
+    public void insertOneWebUrl(WebInfo webInfo) {
 
 
     }
 
     //插入一条网页信息
-    public void inserOneWebUrlByUrl(String webUrl , String title){
+    public void inserOneWebUrlByUrl(String webUrl, String title) {
         Cursor cursor = getOneWebUrlByWebUrl(webUrl);  //查询网页地址是否已存在数据库
-        if (cursor!= null && cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             // 表示有数据
-            Toast.makeText(mContext,"网页地址已存在："+webUrl,Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "网页地址已存在：" + webUrl, Toast.LENGTH_SHORT).show();
 
         } else {
             // 表示没有数据,插入网页信息
             SQLiteDatabase db = getWritableDatabase();
             ContentValues values = new ContentValues();
 
-            int number = getTotalAmount()+1;
-            values.put(COLUMN_WEBURL,webUrl);
-            values.put(COLUMN_WEBTITLE,title);
-            values.put(COLUMN_NUMBER,number);
-            values.put(COLUMN_ICON,R.drawable.bm_default);
-            values.put(COLUMN_ISDEL,"N");
-            values.put(COLUMN_CATEGORY,CATEGORY_DEFAULT);
+            int number = getTotalAmount() + 1;
+            values.put(COLUMN_WEBURL, webUrl);
+            values.put(COLUMN_WEBTITLE, title);
+            values.put(COLUMN_NUMBER, number);
+            values.put(COLUMN_ICON, R.drawable.bm_default);
+            values.put(COLUMN_ISDEL, "N");
+            values.put(COLUMN_CATEGORY, CATEGORY_DEFAULT);
 //            values.put(COLUMN_CATEGORY,"分类55");
-            db.insert(TABLE_NAME_WEBURLS,null,values);
+            db.insert(TABLE_NAME_WEBURLS, null, values);
             db.close();
         }
 
@@ -148,42 +155,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //通过网页标题模糊查询
-    public Cursor getAllWebUrlsByWebTitles(String webTitle){
-        Cursor cursor =null;
-
+    public Cursor getAllWebUrlsByWebTitles(String webTitle) {
+        Cursor cursor = null;
 
 
         return cursor;
     }
 
     //通过网页地址模糊查询
-    public Cursor getAllWebUrlsByWebUrls(String webUrl){
-        Cursor cursor =null;
-
+    public Cursor getAllWebUrlsByWebUrls(String webUrl) {
+        Cursor cursor = null;
 
 
         return cursor;
     }
 
     //通过网页地址精确查询
-    public Cursor getOneWebUrlByWebUrl(String webUrl){
+    public Cursor getOneWebUrlByWebUrl(String webUrl) {
 
         SQLiteDatabase db = getReadableDatabase();
-        String QuerySql = "select * from "+TABLE_NAME_WEBURLS +" where " +COLUMN_WEBURL + " = '" + webUrl +"' AND "+COLUMN_ISDEL + " = 'N'";
-        Log.d("TAG", "QuerySql: "+QuerySql);
+        String QuerySql = "select * from " + TABLE_NAME_WEBURLS + " where " + COLUMN_WEBURL + " = '" + webUrl + "' AND " + COLUMN_ISDEL + " = 'N'";
+        Log.d("TAG", "QuerySql: " + QuerySql);
         Cursor cursor = db.rawQuery(QuerySql, null);
 
         return cursor;
     }
 
     //查询已保存书签数量，用于保存排序编号
-    public int getTotalAmount(){
+    public int getTotalAmount() {
         int dataAmount = 0;
         SQLiteDatabase db = getReadableDatabase();
-        String QuerySql = "select count(*) from "+TABLE_NAME_WEBURLS + " where " + COLUMN_ISDEL + " = 'N'";
+        String QuerySql = "select count(*) from " + TABLE_NAME_WEBURLS + " where " + COLUMN_ISDEL + " = 'N'";
         Cursor cursor = db.rawQuery(QuerySql, null);
 //        cursor.moveToFirst();
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             dataAmount = cursor.getInt(0);
         }
         cursor.close();
@@ -191,11 +196,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //查询所有已保存书签
-    public Cursor getAllBookmarks(){
+    public Cursor getAllBookmarks() {
 
         SQLiteDatabase db = getReadableDatabase();
-        String QuerySql = "select * from "+TABLE_NAME_WEBURLS + " where " + COLUMN_ISDEL + " = 'N' ORDER BY " + COLUMN_NUMBER;
-        Log.d("TAG", "QuerySql: "+QuerySql);
+        String QuerySql = "select * from " + TABLE_NAME_WEBURLS + " where " + COLUMN_ISDEL + " = 'N' ORDER BY " + COLUMN_NUMBER;
+        Log.d("TAG", "QuerySql: " + QuerySql);
         Cursor cursor = db.rawQuery(QuerySql, null);
 
         return cursor;
@@ -203,16 +208,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //按ID更新标题,返回更新数据量,newIconid 传入0 使用默认图标
-    public int updataTitleById(int id ,String newTitle,String newCategory,int newIconid){
+    public int updataTitleById(int id, String newTitle, String newCategory, int newIconid) {
 
-        String stringId = id+"";
+        String stringId = id + "";
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_WEBTITLE,newTitle);
+        values.put(COLUMN_WEBTITLE, newTitle);
         if (newCategory == null) {
-            values.put(COLUMN_CATEGORY,CATEGORY_DEFAULT);
-        }else{
-            values.put(COLUMN_CATEGORY,newCategory);
+            values.put(COLUMN_CATEGORY, CATEGORY_DEFAULT);
+        } else {
+            values.put(COLUMN_CATEGORY, newCategory);
         }
 
         //newIconid 传入0时， 使用默认图标
@@ -220,37 +225,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             newIconid = R.drawable.bm_default;
         }
 
-        values.put(COLUMN_ICON,newIconid);
+        values.put(COLUMN_ICON, newIconid);
 
-        int updatedRows = db.update(TABLE_NAME_WEBURLS,values,COLUMN_ID+" = ?",new String[]{stringId});
+        int updatedRows = db.update(TABLE_NAME_WEBURLS, values, COLUMN_ID + " = ?", new String[]{stringId});
         return updatedRows;
 
     }
 
 
     //按ID标记需要删除数据
-    public int deleteBookmarkById(int id){
-        String stringId = id+"";
+    public int deleteBookmarkById(int id) {
+        String stringId = id + "";
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ISDEL,"Y");
-        int deleteRows = db.update(TABLE_NAME_WEBURLS,values,COLUMN_ID+" = ?",new String[]{stringId});
+        values.put(COLUMN_ISDEL, "Y");
+        int deleteRows = db.update(TABLE_NAME_WEBURLS, values, COLUMN_ID + " = ?", new String[]{stringId});
         return deleteRows;
     }
 
     //按当前列表条目数量，重新更新排序，在删除条目后更新排序序号用
     //传入当前列表，按条目数量更新排序序号
-    public int updateBookmarkListOrderNum(List<WebInfo> bookmarkList){
+    public int updateBookmarkListOrderNum(List<WebInfo> bookmarkList) {
         int updateRows = 0;
         //传入列表不为空时才更新序号
-        if(bookmarkList != null){
+        if (bookmarkList != null) {
             SQLiteDatabase db = getWritableDatabase();
             for (int i = 0; i < bookmarkList.size(); i++) {
 //                Log.d("TAG", "title: "+bookmarkList.get(i).getWebTitle()+" ,id:"+bookmarkList.get(i).getId());
                 ContentValues values = new ContentValues();
-                values.put(COLUMN_NUMBER,i+1);
+                values.put(COLUMN_NUMBER, i + 1);
                 String stringId = bookmarkList.get(i).getId() + "";
-                db.update(TABLE_NAME_WEBURLS,values,COLUMN_ID+" = ? AND "+COLUMN_ISDEL+ " = 'N'",new String[]{stringId});
+                db.update(TABLE_NAME_WEBURLS, values, COLUMN_ID + " = ? AND " + COLUMN_ISDEL + " = 'N'", new String[]{stringId});
 
             }
 
@@ -262,21 +267,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     //读取数据库，获取当前所有分类,加入到列表
-    public List<String> getAllCategory(){
+    public List<String> getAllCategory() {
         List<String> categoryList = new ArrayList<>();
 
         SQLiteDatabase db = getReadableDatabase();
         //按分类数量倒序
 //        String QuerySql = "SELECT " + COLUMN_CATEGORY + " ,  COUNT(*) AS COUNT FROM "+TABLE_NAME_WEBURLS + " WHERE " + COLUMN_ISDEL + " = 'N' GROUP BY " + COLUMN_CATEGORY +" ORDER BY COUNT DESC ";
-        String QuerySql = "SELECT " + COLUMN_CATEGORY + " ,  COUNT(*) AS COUNT FROM "+TABLE_NAME_WEBURLS + " GROUP BY " + COLUMN_CATEGORY +" ORDER BY COUNT DESC ";
-        Log.d("TAG", "QuerySql: "+QuerySql);
+        String QuerySql = "SELECT " + COLUMN_CATEGORY + " ,  COUNT(*) AS COUNT FROM " + TABLE_NAME_WEBURLS + " GROUP BY " + COLUMN_CATEGORY + " ORDER BY COUNT DESC ";
+        Log.d("TAG", "QuerySql: " + QuerySql);
         Cursor cursor = db.rawQuery(QuerySql, null);
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 @SuppressLint("Range") String category = cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY));
                 Log.d("TAG", "category: " + category);
-                if (category!=null&& !category.trim().isEmpty()) {
+                if (category != null && !category.trim().isEmpty()) {
                     categoryList.add(category.trim());
                 }
 
@@ -291,5 +296,85 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return categoryList;
     }
 
+    /*************
 
+     历史记录相关方法
+     **************/
+
+    //保存浏览历史
+    public void saveToHistory(String url, String title, @Nullable String iconurl) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_WEBURL, url);
+        values.put(COLUMN_WEBTITLE, title);
+        if (iconurl == null) {
+            iconurl = "https://mat1.gtimg.com/qqcdn/qqindex2021/favicon.ico";
+        }
+        values.put(COLUMN_ICON, iconurl);
+        values.put(COLUMN_VISITTIME, timeTools.getCurrentTimeFormatted());
+
+        db.insert(TABLE_NAME_HISTORY, null, values);
+        db.close();
+
+        //当超出最大保存记录数时，删除最早的纪录
+        int currentRows = getTotalHistoryRecords();
+        if (currentRows >= MAX_HISTORY_NUM) {
+            int deletRows = currentRows - MAX_HISTORY_NUM + 1;
+            Log.d("TAG", "超出最大记录数: " + deletRows + ",最大记录设置：" + MAX_HISTORY_NUM);
+            deleteHistoryRecords(deletRows);
+        }
+
+
+    }
+
+    //查询浏览历史条数
+    public int getTotalHistoryRecords() {
+        int dataAmount = 0;
+        SQLiteDatabase db = getReadableDatabase();
+        String QuerySql = "select count(*) from " + TABLE_NAME_HISTORY;
+        Cursor cursor = db.rawQuery(QuerySql, null);
+//        cursor.moveToFirst();
+        if (cursor.moveToFirst()) {
+            dataAmount = cursor.getInt(0);
+        }
+        cursor.close();
+        return dataAmount;
+    }
+
+
+    //按参数删除历史浏览记录数
+    public void deleteHistoryRecords(int deleteRows) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + TABLE_NAME_HISTORY + " WHERE id IN (SELECT id FROM " + TABLE_NAME_HISTORY + " ORDER BY id ASC LIMIT " + deleteRows + ")";
+        db.execSQL(query);
+        db.close();
+    }
+
+    //查询所有历史记录
+    public List<WebHistory> getAllWebHistoryList() {
+        List<WebHistory> mWebHistoryList = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+        String QuerySql = "select * from " + TABLE_NAME_HISTORY + " ORDER BY " + COLUMN_VISITTIME + " DESC";
+        Log.d("TAG", "QuerySql: " + QuerySql);
+        Cursor cursor = db.rawQuery(QuerySql, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+                @SuppressLint("Range") String url = cursor.getString(cursor.getColumnIndex(COLUMN_WEBURL));
+                @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex(COLUMN_WEBTITLE));
+                @SuppressLint("Range") String icon = cursor.getString(cursor.getColumnIndex(COLUMN_ICON));
+                @SuppressLint("Range") String visittime = cursor.getString(cursor.getColumnIndex(COLUMN_VISITTIME));
+                Log.d("TAG", "id: " + id + " , title: " + title + " ,url:" + url + " ,icon:" + icon + " ,visittime:" + visittime);
+                WebHistory mwebhistory = new WebHistory(id,url,title,icon,visittime);
+                mWebHistoryList.add(mwebhistory);
+
+            }while (cursor.moveToNext());
+            cursor.close();
+            db.close();
+        }
+        return mWebHistoryList;
+    }
 }

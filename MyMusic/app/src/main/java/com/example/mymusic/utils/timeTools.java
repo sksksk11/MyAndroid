@@ -2,6 +2,9 @@ package com.example.mymusic.utils;
 
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class timeTools {
 
     public static String formateTime(int time){
@@ -28,5 +31,12 @@ public class timeTools {
 
         return minString +":"+secString;
     }
+
+    //获取当前时间，并格式化为 YYYY-MM-DD HH:mm:ss
+    public static String getCurrentTimeFormatted(){
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD HH:mm:ss");
+        return sdf.format(new Date());
+    }
+
 
 }

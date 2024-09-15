@@ -18,4 +18,7 @@ public class UrlTools {
         return url;
     }
 
+    //传入web地址，解析出网页图标
+
+
 }
