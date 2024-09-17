@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
 
@@ -36,6 +37,24 @@ public class HistoryActivity extends AppCompatActivity {
 
         initDatas();
 
+        initClickEvent();  //设置点击事件
+
+    }
+
+    private void initClickEvent() {
+
+        //调用接口获取点击的数据
+        mHistorylistAdapter.setOnClickListener(new MyHistorylistAdapter.onClickListener() {
+            @Override
+            public void onItemClickListener(int position) {
+                WebHistory webHistory = mWebHistoryList.get(position);
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("result",webHistory);
+                setResult(RESULT_OK,resultIntent);
+                finish();
+
+            }
+        });
     }
 
     private void initDatas() {
@@ -55,6 +74,8 @@ public class HistoryActivity extends AppCompatActivity {
         mHistorylistAdapter = new MyHistorylistAdapter(this,mWebHistoryList);
 
         mRecyclerView.setAdapter(mHistorylistAdapter);
+
+
 
     }
 

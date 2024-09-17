@@ -2,7 +2,9 @@ package com.example.mymusic.data;
 
 import androidx.annotation.Nullable;
 
-public class WebHistory {
+import java.io.Serializable;
+
+public class WebHistory implements Serializable {
 
     private int id;
     private String webUrl,webTitle,icon,visitTime;

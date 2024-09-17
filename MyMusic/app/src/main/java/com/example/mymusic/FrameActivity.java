@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.mymusic.data.WebHistory;
 import com.example.mymusic.data.WebInfo;
 import com.example.mymusic.utils.DatabaseHelper;
 import com.example.mymusic.utils.UrlTools;
@@ -58,6 +59,7 @@ public class FrameActivity extends AppCompatActivity {
 
 
     private void initGetResult() {
+        //获取书签页面选择的返回值
         activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -74,6 +76,23 @@ public class FrameActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+        //获取浏览历史页面选择的返回值
+        activityResultHistory = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK && result.getData()!=null) {
+                    WebHistory webHistory = (WebHistory) result.getData().getSerializableExtra("result");
+
+                    String urlString = webHistory.getWebUrl();
+
+                    tv_url.setText(urlString);
+                    wv_mainWebpage.loadUrl(urlString);
+                }
+            }
+        });
 
     }
 
@@ -190,18 +209,18 @@ public class FrameActivity extends AppCompatActivity {
 //        wv_mainWebpage.loadUrl(urlString);
 
 
-        //设置带返回参数的跳转activity
-        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if(result.getResultCode()==RESULT_OK && result.getData()!=null){
-                            String urlData = result.getData().getStringExtra("result_url");
-                            tv_url.setText(urlData);
-                        }
-
-                    }
-                });
+        //设置带返回参数的跳转activity，从书签页面返回？
+//        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+//                new ActivityResultCallback<ActivityResult>() {
+//                    @Override
+//                    public void onActivityResult(ActivityResult result) {
+//                        if(result.getResultCode()==RESULT_OK && result.getData()!=null){
+//                            String urlData = result.getData().getStringExtra("result_url");
+//                            tv_url.setText(urlData);
+//                        }
+//
+//                    }
+//                });
 
 
 
@@ -239,7 +258,8 @@ public class FrameActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext,HistoryActivity.class);
-                startActivity(intent);   //待改为取得返回参数的
+//                startActivity(intent);   //待改为取得返回参数的
+                activityResultHistory.launch(intent);
             }
         });
 
