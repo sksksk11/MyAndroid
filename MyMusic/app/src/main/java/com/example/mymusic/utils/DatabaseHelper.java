@@ -377,4 +377,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return mWebHistoryList;
     }
+
+    //按关键字模糊查询浏览历史记录
+    public List<WebHistory> getHistoryByKeyword(String searchString){
+        List<WebHistory> mWebHistoryList = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+        String QuerySql = "select * from " + TABLE_NAME_HISTORY + " WHERE " + COLUMN_WEBTITLE +" LIKE '%" +searchString+ "%' OR "+COLUMN_WEBURL+" LIKE '%"+searchString+ "%' ORDER BY " + COLUMN_VISITTIME + " DESC";
+        Log.d("TAG", "QuerySql: " + QuerySql);
+        Cursor cursor = db.rawQuery(QuerySql, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+                @SuppressLint("Range") String url = cursor.getString(cursor.getColumnIndex(COLUMN_WEBURL));
+                @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex(COLUMN_WEBTITLE));
+                @SuppressLint("Range") String icon = cursor.getString(cursor.getColumnIndex(COLUMN_ICON));
+                @SuppressLint("Range") String visittime = cursor.getString(cursor.getColumnIndex(COLUMN_VISITTIME));
+                Log.d("TAG", "id: " + id + " , title: " + title + " ,url:" + url + " ,icon:" + icon + " ,visittime:" + visittime);
+                WebHistory mwebhistory = new WebHistory(id,url,title,icon,visittime);
+                mWebHistoryList.add(mwebhistory);
+
+            }while (cursor.moveToNext());
+            cursor.close();
+            db.close();
+        }
+        return mWebHistoryList;
+
+    }
+
+
 }
