@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SavedBookmarkActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/rounded_border"
+        >
+        <EditText
+            android:id="@+id/et_searchBar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="15dp"
+            android:hint="输入搜索..."
+            android:background="@null"
+            android:textColor="@color/black"
+            />
+        <ImageView
+            android:id="@+id/iv_clearSearchText"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/close_gray"
+            android:scaleType="centerInside"
+            android:layout_marginRight="2dp"
+            />
+
+        <ImageView
+            android:id="@+id/iv_searchImage"
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/search_green"
+
+            android:scaleType="centerInside"
+            android:paddingRight="10dp"
+            />
+
+    </LinearLayout>
+    <EditText
+        android:id="@+id/et_inputKeyword"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="10dp"
+        android:hint="输入关键字\n换行可同时记录多个"
+        android:visibility="gone"
+        />
+    <Button
+        android:id="@+id/btn_confirmInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="确定"
+        android:layout_gravity="right"
+        android:layout_marginRight="10dp"
+        android:visibility="gone"
+        />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_keywords"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center"
+        >
+
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+        <Button
+            android:id="@+id/btn_addKeyWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="新增"
+            android:onClick="showKeyWord"
+            />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+
+        <Button
+            android:id="@+id/btn_backupKeyword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="备份"
+
+            />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+        <Button
+            android:id="@+id/btn_sortbyid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="顺序排序"
+
+            />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+        <Button
+            android:id="@+id/btn_sortbyname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="名称排序"
+
+            />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+        <Button
+            android:id="@+id/btn_sortbyclicktimes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="点击排序"
+
+            />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+
+
+    </LinearLayout>
+
+</LinearLayout>

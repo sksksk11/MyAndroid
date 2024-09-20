@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical|left"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        >
+
+    <CheckBox
+        android:id="@+id/cb_checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+
+        />
+    <TextView
+        android:id="@+id/tv_clicktimes"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="20"
+        android:gravity="center_vertical"
+        />
+    <TextView
+        android:id="@+id/tv_keyword"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:text="keyword"
+        android:gravity="center_vertical"
+        />
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray_50"
+        android:layout_gravity="right"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="5dp"
+        />
+
+</LinearLayout>

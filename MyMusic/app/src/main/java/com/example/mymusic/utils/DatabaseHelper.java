@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.example.mymusic.R;
+import com.example.mymusic.data.Keyword;
 import com.example.mymusic.data.WebHistory;
 import com.example.mymusic.data.WebInfo;
 
@@ -405,6 +406,137 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return mWebHistoryList;
 
     }
+
+    /*************
+
+     关键词相关方法
+     **************/
+
+    //查询所有关键词，传入参数，按id/首字符/点击次数/ 排序
+    public List<Keyword> getAllKeywordList(int ordbyStr ,@Nullable boolean isDESC ){
+        List<Keyword> keywordList = new ArrayList<>();
+        String order = "";
+
+        switch (ordbyStr){
+            case 1:
+                order = COLUMN_ID;
+                break;
+            case 2:
+                order = COLUMN_KEYWORD;
+            case 3:
+                order = COLUMN_CLICKTIMES;
+
+            default:order = COLUMN_KEYWORD;
+        }
+        String orderDesc = "";
+        if(isDESC){ orderDesc = "DESC"; }
+
+        SQLiteDatabase db = getReadableDatabase();
+        String QuerySql = "select * from " + TABLE_NAME_KEYWORD + " ORDER BY " + order + " " + orderDesc;
+        Log.d("TAG", "QuerySql: " + QuerySql);
+        Cursor cursor = db.rawQuery(QuerySql, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+                @SuppressLint("Range") String keyword = cursor.getString(cursor.getColumnIndex(COLUMN_KEYWORD));
+                @SuppressLint("Range") int clicktimes = cursor.getInt(cursor.getColumnIndex(COLUMN_CLICKTIMES));
+                @SuppressLint("Range") int  icon = cursor.getInt(cursor.getColumnIndex(COLUMN_ICON));
+
+                Log.d("TAG", "id: " + id + " , keyword: " + keyword + " ,clicktimes:" + clicktimes + " ,icon:" + icon );
+                Keyword mkeyword = new Keyword(id,keyword,clicktimes,icon);
+                keywordList.add(mkeyword);
+
+            }while (cursor.moveToNext());
+            cursor.close();
+            db.close();
+        }
+
+
+        return keywordList;
+    }
+
+
+    //精确查询关键词是否已存在
+    public boolean isKeywordHasAlreadyExists(String inputStr){
+        if(inputStr !=null && !inputStr.trim().isEmpty()){
+            SQLiteDatabase db = this.getReadableDatabase();
+            String query = "SELECT * FROM " + TABLE_NAME_KEYWORD + " WHERE "+ COLUMN_KEYWORD +" = '"+ inputStr.trim() +"'";
+
+            Cursor cursor = db.rawQuery(query, null);
+
+            if(cursor.moveToFirst()){
+
+                return true;
+            }
+
+            cursor.close();
+            db.close();
+        }
+
+
+        return false;
+    }
+
+
+    //插入1个关键词到数据库，成功插入返回1，否则返回0；
+    public int insertKeywordIntoDataBase(Keyword keyword){
+        int rows = 0;
+        if (keyword == null) {
+            return rows;
+        }
+
+        //查询是否已存在，不存在插入
+        if(!isKeywordHasAlreadyExists(keyword.getKeyword())){
+
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+            values.put(COLUMN_KEYWORD, keyword.getKeyword().toString());
+            values.put(COLUMN_CLICKTIMES, keyword.getClicktimes());
+
+            int icon =  R.drawable.logo_strava;
+            if(keyword.getIcon() != null ){  icon = keyword.getIcon(); }
+            values.put(COLUMN_ICON,icon);
+
+            db.insert(TABLE_NAME_KEYWORD, null, values);
+            rows =1;
+            db.close();
+
+        }else {
+            Toast.makeText(mContext,"关键词已存在："+keyword.getKeyword().toString(),Toast.LENGTH_SHORT).show();
+        }
+
+        return rows;
+
+    }
+
+
+
+    //修改关键词
+
+
+    //按id更新关键词点击次数
+    public void updateClickTimesById(Integer id,Integer clickTimes){
+        if (id != null) {
+            String stringId = id + "";
+
+            if (clickTimes != null) {
+                clickTimes++;
+            }else {
+                clickTimes = 0;
+            }
+
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_CLICKTIMES, clickTimes);
+            db.update(TABLE_NAME_KEYWORD, values, COLUMN_ID + " = ?", new String[]{stringId});
+
+            db.close();
+        }
+
+    }
+
 
 
 }

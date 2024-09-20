@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.mymusic.data.Keyword;
 import com.example.mymusic.data.WebHistory;
 import com.example.mymusic.data.WebInfo;
 import com.example.mymusic.utils.DatabaseHelper;
@@ -93,6 +94,10 @@ public class FrameActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //复制关键词到剪贴板
+
+
 
     }
 
@@ -260,6 +265,15 @@ public class FrameActivity extends AppCompatActivity {
                 Intent intent = new Intent(mContext,HistoryActivity.class);
 //                startActivity(intent);   //待改为取得返回参数的
                 activityResultHistory.launch(intent);
+            }
+        });
+
+        //关键词按钮
+        ll_keywordContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, KeywordActivity.class);
+                startActivity(intent);
             }
         });
 
