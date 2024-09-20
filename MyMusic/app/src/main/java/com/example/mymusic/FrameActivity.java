@@ -297,11 +297,13 @@ public class FrameActivity extends AppCompatActivity {
 
     public void addWeburl(View view) {
         //点击收藏按钮，新增网页收藏
-        String url = tv_url.getText().toString().trim();
-        String title = webTitle.trim();
+        if (tv_url.getText() != null && webTitle!=null) {
+            String url = tv_url.getText().toString().trim();
+            String title = webTitle.trim();
 
-        mDatabaseHelper.inserOneWebUrlByUrl(url,title);
-        Toast.makeText(this,"已收藏："+title,Toast.LENGTH_SHORT).show();
+            mDatabaseHelper.inserOneWebUrlByUrl(url,title);
+            Toast.makeText(this,"已收藏："+title,Toast.LENGTH_SHORT).show();
+        }
 
     }
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- item中的属性：showAsAction：always固定在操作栏上直接显示； -->
+    <!-- icon可以直接显示指定图标，不显示文本，如果不使用showAsAction="always",则只会显示文本 -->
+    <!-- 在图标文本同时存在的情况下，如果想要又显示文本又显示icon，使用showAsAction="always|withText" -->
+
+    <item android:title="保存"
+        android:id="@+id/menu_multdelete"
+        android:icon="@drawable/garbage_can"
+        app:showAsAction="always"
+        />
+
+    <item android:title="修改"
+        android:id="@+id/menu_modify"
+        android:icon="@drawable/configured"
+        app:showAsAction="always"
+        />
+
+    <item android:title="排序" >
+
+        <menu >
+            <item android:title="按点击次数"
+                android:id="@+id/menu_orderByClicktimes"/>
+            <item android:title="按名称排序"
+                android:id="@+id/menu_orderByName"/>
+            <item android:title="按添加顺序排序"
+                android:id="@+id/menu_orderByAddition"/>
+        </menu>
+    </item>
+
+</menu>

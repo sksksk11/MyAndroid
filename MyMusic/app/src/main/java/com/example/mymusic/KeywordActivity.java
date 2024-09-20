@@ -1,16 +1,25 @@
 package com.example.mymusic;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mymusic.adapter.MyKeywordListAdapter;
 import com.example.mymusic.data.Keyword;
@@ -21,13 +30,15 @@ import java.util.List;
 
 public class KeywordActivity extends AppCompatActivity {
 
-    private Button btn_addKeyWord,btn_confirmInput;
+    private Button btn_addKeyWord,btn_confirmInput,btn_clearText,btn_pasteboard;
     private EditText et_inputKeyword;
     private DatabaseHelper mDatabaseHelper;
     private List<Keyword> mKeywordList;
     private MyKeywordListAdapter mKeywordListAdapter;
     private RecyclerView mRecyclerView;
     private TextView tv_keyword;
+    private Context mContext;
+    private LinearLayout ll_btnContainer;
 
 
     @Override
@@ -46,6 +57,40 @@ public class KeywordActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+//        return super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_keyword,menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_multdelete:
+                Log.d("TAG", "点击批量删除");
+                return true;
+            case R.id.menu_modify:
+                Log.d("TAG", "点击修改");
+                return true;
+            case R.id.menu_orderByClicktimes:
+                Log.d("TAG", "按点击次数排序");
+                return true;
+            case R.id.menu_orderByName:
+                Log.d("TAG", "按点名称排序");
+                return true;
+            case R.id.menu_orderByAddition:
+                Log.d("TAG", "按点添加顺序排序");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+
     private void initeInteraction() {
         //设置各控件点击事件
 
@@ -57,6 +102,7 @@ public class KeywordActivity extends AppCompatActivity {
                 et_inputKeyword.setVisibility(View.VISIBLE);
                 et_inputKeyword.requestFocus();
                 btn_confirmInput.setVisibility(View.VISIBLE);
+                ll_btnContainer.setVisibility(View.VISIBLE);
 
             }
         });
@@ -71,6 +117,7 @@ public class KeywordActivity extends AppCompatActivity {
 
                 et_inputKeyword.setVisibility(View.GONE);
                 btn_confirmInput.setVisibility(View.GONE);
+                ll_btnContainer.setVisibility(View.GONE);
             }
         });
 
@@ -82,11 +129,44 @@ public class KeywordActivity extends AppCompatActivity {
                 Log.d("TAG", "点击keyword: "+keyword.toString());
 
                 //复制到粘贴板
+                ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("keyword", keyword.getKeyword());
+                clipboard.setPrimaryClip(clip);
+
+                Toast.makeText(mContext,"已复制："+keyword.getKeyword(),Toast.LENGTH_SHORT).show();
 
                 //按id，点击次数+1 更新到数据库
                 mDatabaseHelper.updateClickTimesById(keyword.getId(),keyword.getClicktimes());
 
-                recreate();
+                finish();
+            }
+        });
+
+        //清空按钮
+        btn_clearText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                et_inputKeyword.setText("");
+            }
+        });
+
+        //读取剪贴板按钮,粘贴到文本框
+        btn_pasteboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                if (clipboard.hasPrimaryClip()) {
+                    ClipData clipData = clipboard.getPrimaryClip();
+                    if (clipData.getItemCount()>0) {
+                        ClipData.Item item = clipData.getItemAt(0);
+                        CharSequence pasteText = item.getText().toString().trim();
+                        Log.d("TAG", "pasteText: "+pasteText);
+                        if (pasteText != null&& !((String) pasteText).isEmpty()) {
+                            et_inputKeyword.setText(pasteText);
+                            et_inputKeyword.setSelection(et_inputKeyword.getText().length());  //焦点放置在文本最后一位
+                          }
+                    }
+                }
             }
         });
 
@@ -112,6 +192,16 @@ public class KeywordActivity extends AppCompatActivity {
         btn_confirmInput = findViewById(R.id.btn_confirmInput);
         mRecyclerView = findViewById(R.id.rv_keywords);
         tv_keyword = findViewById(R.id.tv_keyword);
+
+        ll_btnContainer = findViewById(R.id.ll_btnContainer);
+        btn_clearText = findViewById(R.id.btn_clearText);
+        btn_pasteboard = findViewById(R.id.btn_pasteboard);
+        et_inputKeyword = findViewById(R.id.et_inputKeyword);
+
+        mContext = this;
+
+
+
 
     }
 

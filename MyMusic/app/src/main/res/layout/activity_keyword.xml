@@ -55,15 +55,54 @@
         android:hint="输入关键字\n换行可同时记录多个"
         android:visibility="gone"
         />
-    <Button
-        android:id="@+id/btn_confirmInput"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/ll_btnContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="确定"
-        android:layout_gravity="right"
-        android:layout_marginRight="10dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:visibility="gone"
-        />
+        >
+
+        <Button
+            android:id="@+id/btn_clearText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清空"
+
+            />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+        <Button
+            android:id="@+id/btn_pasteboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="粘贴板"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            />
+
+        <Button
+            android:id="@+id/btn_confirmInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="确定"
+
+
+            />
+
+    </LinearLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_keywords"
         android:layout_width="match_parent"
