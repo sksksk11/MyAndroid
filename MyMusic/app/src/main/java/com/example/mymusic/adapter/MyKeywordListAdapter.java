@@ -79,6 +79,20 @@ public class MyKeywordListAdapter extends RecyclerView.Adapter<MyKeywordListAdap
                 }
             });
 
+            cb_checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(cb_checkBox.isChecked()){
+                        myOnClickKeywordListener.OnCheckboxChecked(getAdapterPosition(),true);
+
+                    }else{
+                        myOnClickKeywordListener.OnCheckboxChecked(getAdapterPosition(),false);
+                    }
+
+
+                }
+            });
+
 
         }
     }
@@ -86,6 +100,8 @@ public class MyKeywordListAdapter extends RecyclerView.Adapter<MyKeywordListAdap
     public interface OnClickKeywordListener {
 
         public void OnItemclick(int position);
+
+        public void OnCheckboxChecked(int position,boolean isChecked);
 
     }
 

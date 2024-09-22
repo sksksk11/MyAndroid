@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,13 +36,13 @@ public class KeywordActivity extends AppCompatActivity {
     private Button btn_addKeyWord,btn_confirmInput,btn_clearText,btn_pasteboard;
     private EditText et_inputKeyword;
     private DatabaseHelper mDatabaseHelper;
-    private List<Keyword> mKeywordList;
+    private List<Keyword> mKeywordList,selectKeywordList;
     private MyKeywordListAdapter mKeywordListAdapter;
     private RecyclerView mRecyclerView;
-    private TextView tv_keyword;
+//    private TextView tv_keyword;
     private Context mContext;
     private LinearLayout ll_btnContainer;
-
+    private CheckBox cb_checkBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,7 @@ public class KeywordActivity extends AppCompatActivity {
 
     }
 
+    //创建菜单
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 //        return super.onCreateOptionsMenu(menu);
@@ -66,11 +70,46 @@ public class KeywordActivity extends AppCompatActivity {
         return true;
     }
 
+    //选择菜单项
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
+            case R.id.menu_multselect:
+                Log.d("TAG", "点击多选");
+                selectKeywordList.clear();   //清空已选择的关键词
+                return true;
             case R.id.menu_multdelete:
                 Log.d("TAG", "点击批量删除");
+                if (selectKeywordList.size() == 0) {
+                    Toast.makeText(mContext,"请选择关键词",Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                //获取已选择的关键词
+                String selectedStr = "";
+
+                for(Keyword w :selectKeywordList){
+                    selectedStr = selectedStr + w.getKeyword()+" | " ;
+                }
+                TextView selectedStrTextView = new TextView(mContext);
+                selectedStrTextView.setText(selectedStr);
+                selectedStrTextView.setPadding(10,5,10,5); ;
+
+                //弹出对话框确认是否删除
+                new AlertDialog.Builder(mContext)
+                        .setMessage("是否删除以下关键词：")
+                        .setView(selectedStrTextView)
+                        .setPositiveButton("确定",((dialog, which) -> {
+                            for(Keyword w :selectKeywordList){
+                                mDatabaseHelper.deleteKeywordById(w.getId());
+                            }
+                            recreate(); //刷新页面
+                        }))
+                        .setNegativeButton("取消",(dialog, which) -> {
+
+                        })
+                        .show();
+
+
                 return true;
             case R.id.menu_modify:
                 Log.d("TAG", "点击修改");
@@ -89,6 +128,9 @@ public class KeywordActivity extends AppCompatActivity {
         }
 
     }
+
+    //屏幕选择时
+
 
 
     private void initeInteraction() {
@@ -118,11 +160,13 @@ public class KeywordActivity extends AppCompatActivity {
                 et_inputKeyword.setVisibility(View.GONE);
                 btn_confirmInput.setVisibility(View.GONE);
                 ll_btnContainer.setVisibility(View.GONE);
+                recreate();
             }
         });
 
         //点击关键词，复制到粘贴板，点击次数+1
         mKeywordListAdapter.setOnClickKeywordListener(new MyKeywordListAdapter.OnClickKeywordListener() {
+            //选择item
             @Override
             public void OnItemclick(int position) {
                 Keyword keyword = mKeywordList.get(position);
@@ -140,6 +184,24 @@ public class KeywordActivity extends AppCompatActivity {
 
                 finish();
             }
+
+            //选择checkbox
+            @Override
+            public void OnCheckboxChecked(int position, boolean isChecked) {
+
+                Log.d("TAG", "checkbox: "+position + " isChecked："+isChecked);
+                if (isChecked) {
+                    selectKeywordList.add(mKeywordList.get(position));
+                    Log.d("TAG", "selectKeywordList: "+selectKeywordList.toString());
+                }else {
+                    selectKeywordList.remove(mKeywordList.get(position));
+                    Log.d("TAG", "selectKeywordList: "+selectKeywordList.toString());
+                }
+
+            }
+
+
+
         });
 
         //清空按钮
@@ -170,6 +232,10 @@ public class KeywordActivity extends AppCompatActivity {
             }
         });
 
+        //复选框选择
+
+
+
 
     }
 
@@ -191,7 +257,8 @@ public class KeywordActivity extends AppCompatActivity {
         et_inputKeyword = findViewById(R.id.et_inputKeyword);
         btn_confirmInput = findViewById(R.id.btn_confirmInput);
         mRecyclerView = findViewById(R.id.rv_keywords);
-        tv_keyword = findViewById(R.id.tv_keyword);
+//        tv_keyword = findViewById(R.id.tv_keyword);
+        cb_checkBox = findViewById(R.id.cb_checkBox);
 
         ll_btnContainer = findViewById(R.id.ll_btnContainer);
         btn_clearText = findViewById(R.id.btn_clearText);
@@ -200,8 +267,7 @@ public class KeywordActivity extends AppCompatActivity {
 
         mContext = this;
 
-
-
+        selectKeywordList = new ArrayList<>();
 
     }
 

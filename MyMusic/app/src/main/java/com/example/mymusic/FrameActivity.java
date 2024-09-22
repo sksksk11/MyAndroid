@@ -4,11 +4,13 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,7 +35,7 @@ import com.example.mymusic.utils.UrlTools;
 
 public class FrameActivity extends AppCompatActivity {
 
-    private Button btn_go,btn_collect,btn_bookMark;
+    private Button btn_go,btn_collect,btn_bookMark,btn_hiddenMainbar,btn_displayMainbar;
     private EditText tv_url;
     private WebView wv_mainWebpage;
     private String loadedUrl ,webTitle ;  //存储页面加载后的网页url和标题
@@ -42,6 +44,7 @@ public class FrameActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> activityResultLauncher ,activityResultHistory;
     private Context mContext;
     private LinearLayout ll_collectContainer,ll_clearContainer,ll_bookmarkContainer,ll_historyContainer,ll_keywordContainer;
+    private LinearLayout ll_webUrlContainer,ll_mainButtonBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,27 @@ public class FrameActivity extends AppCompatActivity {
 
         //获取返回值
         initGetResult();
+
+
+    }
+
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            //横屏时，显示按钮
+//            btn_hiddenMainbar.setVisibility(View.VISIBLE);
+//            btn_hiddenMainbar.setVisibility(View.GONE);
+            ll_mainButtonBar.setVisibility(View.GONE);
+            ll_webUrlContainer.setVisibility(View.GONE);
+        }else if(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            //竖屏时，显示主按钮和url输入框
+//            btn_hiddenMainbar.setVisibility(View.GONE);
+            ll_mainButtonBar.setVisibility(View.VISIBLE);
+            ll_webUrlContainer.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -159,6 +183,11 @@ public class FrameActivity extends AppCompatActivity {
         ll_bookmarkContainer = findViewById(R.id.ll_bookmarkContainer);
         ll_historyContainer = findViewById(R.id.ll_historyContainer);
         ll_keywordContainer = findViewById(R.id.ll_keywordContainer);
+
+        btn_hiddenMainbar = findViewById(R.id.btn_hiddenMainbar);
+        btn_displayMainbar = findViewById(R.id.btn_displayMainbar);
+        ll_webUrlContainer = findViewById(R.id.ll_webUrlContainer);
+        ll_mainButtonBar = findViewById(R.id.ll_mainButtonBar);
 
         mContext = this;
 
@@ -276,6 +305,28 @@ public class FrameActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        //隐藏主按钮条
+        btn_hiddenMainbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ll_webUrlContainer.setVisibility(View.GONE);
+                ll_mainButtonBar.setVisibility(View.GONE);
+                btn_hiddenMainbar.setVisibility(View.GONE);
+                btn_displayMainbar.setVisibility(View.VISIBLE);
+            }
+        });
+
+        //显示主按钮条
+//        btn_displayMainbar.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ll_webUrlContainer.setVisibility(View.VISIBLE);
+//                ll_mainButtonBar.setVisibility(View.VISIBLE);
+//                btn_hiddenMainbar.setVisibility(View.GONE);
+//                btn_displayMainbar.setVisibility(View.GONE);
+//            }
+//        });
 
     }
 

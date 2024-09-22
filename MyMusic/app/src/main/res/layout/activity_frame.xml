@@ -14,7 +14,23 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <Button
+        android:id="@+id/btn_hiddenMainbar"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="隐藏"
+        android:visibility="gone"
+        />
+    <Button
+        android:id="@+id/btn_displayMainbar"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="隐藏"
+        android:visibility="gone"
+        />
+
     <LinearLayout
+        android:id="@+id/ll_webUrlContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -88,6 +104,7 @@
 <!--    </LinearLayout>-->
 
     <LinearLayout
+        android:id="@+id/ll_mainButtonBar"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:orientation="horizontal"

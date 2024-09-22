@@ -6,6 +6,11 @@
     <!-- icon可以直接显示指定图标，不显示文本，如果不使用showAsAction="always",则只会显示文本 -->
     <!-- 在图标文本同时存在的情况下，如果想要又显示文本又显示icon，使用showAsAction="always|withText" -->
 
+    <item android:title="多选"
+        android:id="@+id/menu_multselect"
+        android:icon="@drawable/white_tags"
+        app:showAsAction="always"
+        />
     <item android:title="保存"
         android:id="@+id/menu_multdelete"
         android:icon="@drawable/garbage_can"

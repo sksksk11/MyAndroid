@@ -537,6 +537,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    //按id删除关键词
+    public void deleteKeywordById(Integer id) {
+        if (id != null) {
+            String stringId = id + "";
+            SQLiteDatabase db = getWritableDatabase();
+
+            db.delete(TABLE_NAME_KEYWORD, COLUMN_ID + " = ?", new String[]{stringId});
+            db.close();
+
+        }
+    }
+
 
 
 }
