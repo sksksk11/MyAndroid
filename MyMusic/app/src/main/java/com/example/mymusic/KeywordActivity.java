@@ -11,6 +11,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +37,7 @@ import java.util.List;
 public class KeywordActivity extends AppCompatActivity {
 
     private Button btn_addKeyWord,btn_confirmInput,btn_clearText,btn_pasteboard;
-    private EditText et_inputKeyword;
+    private EditText et_inputKeyword ,et_searchBar;
     private DatabaseHelper mDatabaseHelper;
     private List<Keyword> mKeywordList,selectKeywordList;
     private MyKeywordListAdapter mKeywordListAdapter;
@@ -43,6 +46,7 @@ public class KeywordActivity extends AppCompatActivity {
     private Context mContext;
     private LinearLayout ll_btnContainer;
     private CheckBox cb_checkBox;
+    private ImageView iv_searchImage,iv_clearSearchText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,15 +117,62 @@ public class KeywordActivity extends AppCompatActivity {
                 return true;
             case R.id.menu_modify:
                 Log.d("TAG", "点击修改");
+
+                //选择多行时，提醒只能一次修改一个关键词
+                if (selectKeywordList.size() > 1 ) {
+                    Toast.makeText(mContext,"一次只能修改一个关键词",Toast.LENGTH_SHORT).show();
+
+                }else if(selectKeywordList.size() == 0){
+                    Toast.makeText(mContext,"请选择一个要修改的关键词",Toast.LENGTH_SHORT).show();
+                }else if(selectKeywordList.size() ==1){
+                    Keyword newKeyword = selectKeywordList.get(0);
+                    EditText editStrTextView = new EditText(mContext);
+                    editStrTextView.setText(newKeyword.getKeyword());
+
+                    //弹出对话框
+                    new AlertDialog.Builder(mContext)
+                            .setMessage("是否修改关键词：")
+                            .setView(editStrTextView)
+                            .setPositiveButton("确定",((dialog, which) -> {
+                                //更新数据
+                                mDatabaseHelper.updateKeywordById(newKeyword.getId(),editStrTextView.getText().toString().trim());
+                                recreate(); //刷新页面
+                            }))
+                            .setNegativeButton("取消",(dialog, which) -> {
+
+                            })
+                            .show();
+
+                }
+
+
+
                 return true;
             case R.id.menu_orderByClicktimes:
                 Log.d("TAG", "按点击次数排序");
+
+                List<Keyword> orderByClicktimesList = new ArrayList<>();
+                orderByClicktimesList = mDatabaseHelper.getAllKeywordList(3,true);
+                mKeywordList.clear();
+                mKeywordList.addAll(orderByClicktimesList);
+                mKeywordListAdapter.notifyDataSetChanged();
                 return true;
             case R.id.menu_orderByName:
                 Log.d("TAG", "按点名称排序");
+                List<Keyword> orderByNameList = new ArrayList<>();
+                orderByNameList = mDatabaseHelper.getAllKeywordList(2,false);
+                mKeywordList.clear();
+                mKeywordList.addAll(orderByNameList);
+                mKeywordListAdapter.notifyDataSetChanged();
                 return true;
             case R.id.menu_orderByAddition:
                 Log.d("TAG", "按点添加顺序排序");
+
+                List<Keyword> orderByIdList = new ArrayList<>();
+                orderByIdList = mDatabaseHelper.getAllKeywordList(1,true);
+                mKeywordList.clear();
+                mKeywordList.addAll(orderByIdList);
+                mKeywordListAdapter.notifyDataSetChanged();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -234,8 +285,41 @@ public class KeywordActivity extends AppCompatActivity {
 
         //复选框选择
 
+        //搜索按钮
 
+        //搜索框文字输入监听
+        et_searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                List<Keyword> getKeywordList = new ArrayList<>();
+                String inputStr = et_searchBar.getText().toString().trim();
+
+                getKeywordList = mDatabaseHelper.getKeywordListByStr(inputStr);
+                mKeywordList.clear();
+                mKeywordList.addAll(getKeywordList);
+                mKeywordListAdapter.notifyDataSetChanged();
+
+            }
+        });
+
+        //清空查询框
+        iv_clearSearchText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                et_searchBar.setText("");
+                recreate();
+            }
+        });
 
     }
 
@@ -254,7 +338,7 @@ public class KeywordActivity extends AppCompatActivity {
 
     private void initView() {
         btn_addKeyWord = findViewById(R.id.btn_addKeyWord);
-        et_inputKeyword = findViewById(R.id.et_inputKeyword);
+//        et_inputKeyword = findViewById(R.id.et_inputKeyword);
         btn_confirmInput = findViewById(R.id.btn_confirmInput);
         mRecyclerView = findViewById(R.id.rv_keywords);
 //        tv_keyword = findViewById(R.id.tv_keyword);
@@ -264,6 +348,10 @@ public class KeywordActivity extends AppCompatActivity {
         btn_clearText = findViewById(R.id.btn_clearText);
         btn_pasteboard = findViewById(R.id.btn_pasteboard);
         et_inputKeyword = findViewById(R.id.et_inputKeyword);
+
+        iv_searchImage = findViewById(R.id.iv_searchImage);
+        et_searchBar = findViewById(R.id.et_searchBar);
+        iv_clearSearchText = findViewById(R.id.iv_clearSearchText);
 
         mContext = this;
 

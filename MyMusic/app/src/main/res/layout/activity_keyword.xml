@@ -151,42 +151,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             />
-        <Button
-            android:id="@+id/btn_sortbyid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="顺序排序"
-
-            />
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
-        <Button
-            android:id="@+id/btn_sortbyname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="名称排序"
-
-            />
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
-        <Button
-            android:id="@+id/btn_sortbyclicktimes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="点击排序"
-
-            />
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
 
 
     </LinearLayout>

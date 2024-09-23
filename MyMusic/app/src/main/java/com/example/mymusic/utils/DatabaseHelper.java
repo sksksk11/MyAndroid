@@ -423,10 +423,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 break;
             case 2:
                 order = COLUMN_KEYWORD;
+                break;
             case 3:
                 order = COLUMN_CLICKTIMES;
+                break;
 
-            default:order = COLUMN_KEYWORD;
+            default:
+                order = COLUMN_KEYWORD;
+                break;
         }
         String orderDesc = "";
         if(isDESC){ orderDesc = "DESC"; }
@@ -550,5 +554,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    //按id更新关键词
+    public void updateKeywordById(Integer id,String newKeyword){
+        if (id != null) {
+            String stringId = id + "";
+
+            if (newKeyword != null&& !newKeyword.trim().isEmpty()) {
+                SQLiteDatabase db = getWritableDatabase();
+                ContentValues values = new ContentValues();
+                values.put(COLUMN_KEYWORD, newKeyword.trim());
+                db.update(TABLE_NAME_KEYWORD, values, COLUMN_ID + " = ?", new String[]{stringId});
+                db.close();
+            }
+        }
+
+    }
+
+    //按输入文本模糊搜索关键词
+    public List<Keyword> getKeywordListByStr(String inputStr) {
+        List<Keyword> keywordList = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME_KEYWORD + " WHERE " + COLUMN_KEYWORD + " like '%" + inputStr.trim() + "%'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+                @SuppressLint("Range") String keyword = cursor.getString(cursor.getColumnIndex(COLUMN_KEYWORD));
+                @SuppressLint("Range") int clicktimes = cursor.getInt(cursor.getColumnIndex(COLUMN_CLICKTIMES));
+                @SuppressLint("Range") int icon = cursor.getInt(cursor.getColumnIndex(COLUMN_ICON));
+
+                Log.d("TAG", "id: " + id + " , keyword: " + keyword + " ,clicktimes:" + clicktimes + " ,icon:" + icon);
+                Keyword mkeyword = new Keyword(id, keyword, clicktimes, icon);
+                keywordList.add(mkeyword);
+
+            } while (cursor.moveToNext());
+
+            cursor.close();
+            db.close();
+
+        }
+
+        return keywordList;
+    }
 
 }
