@@ -18,6 +18,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -29,13 +31,19 @@ import android.widget.Toast;
 
 import com.example.mymusic.data.Keyword;
 import com.example.mymusic.data.WebHistory;
+import com.example.mymusic.data.WebImage;
 import com.example.mymusic.data.WebInfo;
 import com.example.mymusic.utils.DatabaseHelper;
 import com.example.mymusic.utils.UrlTools;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class FrameActivity extends AppCompatActivity {
 
-    private Button btn_go,btn_collect,btn_bookMark,btn_hiddenMainbar,btn_displayMainbar;
+    private Button btn_go,btn_collect,btn_bookMark,btn_hiddenMainbar,btn_displayMainbar,btn_clear;
     private EditText tv_url;
     private WebView wv_mainWebpage;
     private String loadedUrl ,webTitle ;  //存储页面加载后的网页url和标题
@@ -43,8 +51,9 @@ public class FrameActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 100 ;   //选择书签返回参数
     private ActivityResultLauncher<Intent> activityResultLauncher ,activityResultHistory;
     private Context mContext;
-    private LinearLayout ll_collectContainer,ll_clearContainer,ll_bookmarkContainer,ll_historyContainer,ll_keywordContainer;
+    private LinearLayout ll_collectContainer,ll_getPicContainer,ll_bookmarkContainer,ll_historyContainer,ll_keywordContainer;
     private LinearLayout ll_webUrlContainer,ll_mainButtonBar;
+    private List<String> imageDataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,7 +188,7 @@ public class FrameActivity extends AppCompatActivity {
 //        btn_collect = findViewById(R.id.btn_collect);    //原收藏按钮，已删除
 
         ll_collectContainer = findViewById(R.id.ll_collectContainer);
-        ll_clearContainer = findViewById(R.id.ll_clearContainer);
+        ll_getPicContainer = findViewById(R.id.ll_getPicContainer);
         ll_bookmarkContainer = findViewById(R.id.ll_bookmarkContainer);
         ll_historyContainer = findViewById(R.id.ll_historyContainer);
         ll_keywordContainer = findViewById(R.id.ll_keywordContainer);
@@ -189,7 +198,11 @@ public class FrameActivity extends AppCompatActivity {
         ll_webUrlContainer = findViewById(R.id.ll_webUrlContainer);
         ll_mainButtonBar = findViewById(R.id.ll_mainButtonBar);
 
+        btn_clear = findViewById(R.id.btn_clear);
+
         mContext = this;
+
+        imageDataSource = new ArrayList<>();
 
         String urlString = "http://www.163.com";
 
@@ -237,24 +250,80 @@ public class FrameActivity extends AppCompatActivity {
                 //将地址和标题存入历史记录表
                 mDatabaseHelper.saveToHistory(loadedUrl,webTitle,null);
 
+                //获取页面的所有图片地址
+
+                getWebViewImage();
+                setWebImageClick(view);
+
             }
+
+
+            // 获取图片
+            private void getWebViewImage() {
+
+                String jsString = "function getImages() {\n" +
+                        "\tvar imgs = document.getElementsByTagName('img');\n" +
+                        "\tvar imgScr = '';\n" +
+                        "\tfor (var i = 0; i < imgs.length; i++) {\n" +
+                        "\t\tif (i == 0) {\n" +
+                        "\t\t\timgScr = imgs[i].src;\n" +
+                        "\t\t} else {\n" +
+                        "\t\t\timgScr = imgScr + '---' + imgs[i].src;\n" +
+                        "\t\t}\n" +
+                        "\t};\n" +
+                        "\treturn imgScr;\n" +
+                        "};";
+
+                wv_mainWebpage.evaluateJavascript(jsString, null);
+
+                wv_mainWebpage.evaluateJavascript("javascript:getImages()", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        if (value != null && !value.equals("") && !value.equals("null")) {
+                            value = value.replace("\"", "");
+                            String[] dataSource = value.split(
+                                    "---");
+
+//                            if(imageDataSource != null && imageDataSource.size() > 0){imageDataSource.clear();}
+                            imageDataSource = Arrays.asList(dataSource);
+                            Log.d("TAG", "已获取到图片, 总共 " + imageDataSource.size() + " 张图片");
+//                            Log.d("TAG", "imageDataSource：" + imageDataSource.toString());
+
+                        }
+                    }
+                });
+
+                wv_mainWebpage.addJavascriptInterface(new JsCallJavaObj() {
+                    @JavascriptInterface
+                    @Override
+                    public void showBigImg(String url) {
+//                            Log("点击图片");
+                    }
+                }, "jsCallJavaObj");
+
+            }
+
+                // 添加图片点击方法
+                private void setWebImageClick(WebView view) {
+                    String jsCode = "javascript:(function(){" +
+                            "var imgs=document.getElementsByTagName(\"img\");" +
+                            "for(var i=0;i<imgs.length;i++){" +
+                            "imgs[i].onclick=function(){" +
+                            "window.jsCallJavaObj.showBigImg(this.src);" +
+                            "}}})()";
+                    wv_mainWebpage.loadUrl(jsCode);
+                }
+
+
         });
+
 
 //        wv_mainWebpage.loadUrl(urlString);
 
 
-        //设置带返回参数的跳转activity，从书签页面返回？
-//        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-//                new ActivityResultCallback<ActivityResult>() {
-//                    @Override
-//                    public void onActivityResult(ActivityResult result) {
-//                        if(result.getResultCode()==RESULT_OK && result.getData()!=null){
-//                            String urlData = result.getData().getStringExtra("result_url");
-//                            tv_url.setText(urlData);
-//                        }
-//
-//                    }
-//                });
+        // 启用缩放
+        wv_mainWebpage.getSettings().setSupportZoom(true);
+        wv_mainWebpage.getSettings().setBuiltInZoomControls(true);
 
 
 
@@ -277,13 +346,14 @@ public class FrameActivity extends AppCompatActivity {
             }
         });
 
-        //清空地址栏按钮
-        ll_clearContainer.setOnClickListener(new View.OnClickListener() {
+        //获取网页图片按钮
+        ll_getPicContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(mContext, WebImagesActivity.class);
+                intent.putStringArrayListExtra("WebImageList", new ArrayList<>(imageDataSource) );
 
-                tv_url.setText("");
-                tv_url.requestFocus();
+                startActivity(intent);
             }
         });
 
@@ -316,6 +386,16 @@ public class FrameActivity extends AppCompatActivity {
                 btn_displayMainbar.setVisibility(View.VISIBLE);
             }
         });
+
+        //清空url地址栏 内容
+        btn_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tv_url.setText("");
+                tv_url.requestFocus();
+            }
+        });
+
 
         //显示主按钮条
 //        btn_displayMainbar.setOnClickListener(new View.OnClickListener() {
@@ -383,4 +463,12 @@ public class FrameActivity extends AppCompatActivity {
         tv_url.setText("");
         tv_url.requestFocus();
     }
+
+    /**
+     * Js調用Java接口
+     */
+    private interface JsCallJavaObj {
+        void showBigImg(String url);
+    }
+
 }

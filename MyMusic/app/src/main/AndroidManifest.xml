@@ -14,10 +14,11 @@
         android:theme="@style/Theme.MyMusic"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".WebImagesActivity"
+            android:exported="true" />
+        <activity
             android:name=".KeywordActivity"
-            android:exported="true"
-
-            />
+            android:exported="true" />
         <activity
             android:name=".HistoryActivity"
             android:exported="true" />
@@ -27,10 +28,9 @@
             android:theme="@style/Theme.noDarkModem" />
         <activity
             android:name=".FrameActivity"
-            android:exported="true"
-            android:theme="@style/Theme.fullScreen"
             android:configChanges="orientation|screenSize"
-            />
+            android:exported="true"
+            android:theme="@style/Theme.fullScreen" />
         <activity
             android:name=".MusicPlayActivity"
             android:exported="true"

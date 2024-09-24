@@ -47,6 +47,18 @@
             android:gravity="center_vertical"
             />
         <Button
+            android:id="@+id/btn_clear"
+            android:layout_width="49dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="X"
+            android:maxLines="1"
+            android:textSize="16dp"
+            android:layout_marginRight="2dp"
+            android:onClick="openWebUrl"
+            />
+
+        <Button
             android:id="@+id/btn_go"
             android:layout_width="49dp"
             android:layout_height="wrap_content"
@@ -140,7 +152,7 @@
 
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/ll_clearContainer"
+            android:id="@+id/ll_getPicContainer"
             android:layout_width="0dp"
             android:layout_height="@dimen/LinearLayout_height"
             android:orientation="vertical"
@@ -149,17 +161,17 @@
             >
 
             <ImageView
-                android:id="@+id/iv_clearImageView"
+                android:id="@+id/iv_getPic"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/img_height"
                 android:layout_marginTop="@dimen/img_marginTop"
-                android:src="@drawable/white_eraser" />
+                android:src="@drawable/white_picture" />
             <TextView
-                android:id="@+id/tv_clearTextView"
+                android:id="@+id/tv_getPic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_marginTop"
-                android:text="清空"
+                android:text="图片"
                 android:textColor="@color/white"
                 />
 
